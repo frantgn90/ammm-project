@@ -2,11 +2,15 @@
 # vim:fenc=utf-8
 
 class Path(object):
-    def __init__(self, sourceLoc, destLoc, distance):
+    def __init__(self, _id, sourceLoc, destLoc, distance):
+        self._id = _id
         self.sourceLoc = sourceLoc
         self.destLoc = destLoc
         self.distance = distance
 
+    def getId(self):
+        return self._id
+        
     def getSource(self):
         return self.sourceLoc
 

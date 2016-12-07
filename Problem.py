@@ -7,8 +7,8 @@ from Path import Path
 class Problem(object):
     def __init__(self, input_data_file):
         # Parsing file
-        nLocations=self.__parse_n_locations(input_data_file)
-        startLocation=self.__parse_start_location(input_data_file)
+        self.nLocations=self.__parse_n_locations(input_data_file)
+        self.startLocation=self.__parse_start_location(input_data_file)
 
         # -- Raw data
         distances=self.__parse_distances(input_data_file)
@@ -41,11 +41,14 @@ class Problem(object):
 
         # Create path objects
         self.paths=[]
+        paths_count=1
         for i in range(nLocations):
             for j in range(nLocations):
                 if i==j: continue
-                pa=Path(self.locations[i], self.locations[j], distances[i][j])
+                pa=Path(paths_count,self.locations[i], self.locations[j], 
+                    distances[i][j])
                 self.paths.append(pa)
+                paths_count+=1
 
     def getPathsFrom(self, from_location):
         result=[]

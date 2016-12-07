@@ -26,23 +26,25 @@ def main(argc, argv):
     problem = Problem(input_data_file)
     #problem.print_test()
     
-    solution = Solution()
     if heuristic == "GRASP":
         grasp=Solver_GRASP(problem)
         grasp.Solve(LS_ALFA)
-        grasp.LocalSearch(LS_NB, LS_ST)
-        solution = grasp.getSolution()
+        if graps.isFeasible():
+            grasp.LocalSearch(LS_NB, LS_ST)
+        else:
+            print("GRASP: Solution not feasible")
+            exit(0)
 
-        print solution.str()
+        print grasp.printSolution()
 
     elif heuristic == "BRKGA":
         solution = Solver_BRKGA(problem, solution)
     else:
         assert False, "{0} heuristic is not developed".format(heuristic)
 
-    input_data_file_name = input_data_file.split(".")[:-1]
-    output_data_file = input_data_file_name + ".sol"
-    solution.write(output_data_file)
+    #input_data_file_name = input_data_file.split(".")[:-1]
+    #output_data_file = input_data_file_name + ".sol"
+    #solution.write(output_data_file)
 
     return 0
 

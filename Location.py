@@ -7,6 +7,7 @@ class Location(object):
         self.task=task
         self.minW=minW
         self.maxW=maxW
+        self.arrivingTime=None
 
     def getTask(self):
         return self.task
@@ -19,4 +20,12 @@ class Location(object):
 
     def getId(self):
         return self._id
+        
+    def getarrivingTime(self):
+        return self.arrivingTime
+       
+    def getWaitingTime(self):
+        assert self.arrivingTime != None, "Location {0} error: Arriving time \
+            must be set before get the Waiting time."
+        return max(0, self.minW-self.arrivingTime)
 
