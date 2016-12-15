@@ -17,16 +17,16 @@ class Problem(object):
         tasks=self.__parse_tasks(input_data_file)
 
         # Check the correctness of data
-        assert startLocation > 0 and startLocation <= nLocations, \
+        assert self.startLocation > 0 and self.startLocation <= self.nLocations, \
             "1 < startLocation < nLocations, but 1 < {0} < {1}".format(startLocation,nLocations)
 
-        assert len(distances)*len(distances[0])-len(distances) == nLocations**2-nLocations, \
+        assert len(distances)*len(distances[0])-len(distances) == self.nLocations**2-self.nLocations, \
             "len(distances)=nLocations, but {0}!={1}".format(len(distances), nLocations**2-nLocations)
 
-        assert len(minimWind) == len(maximWind) and len(maximWind) == nLocations, \
+        assert len(minimWind) == len(maximWind) and len(maximWind) == self.nLocations, \
             "len(windows)=nLocations, but ({0},{1})!={2}".format(len(minimWind), len(maximWind), nLocations)
 
-        assert len(tasks) == nLocations, \
+        assert len(tasks) == self.nLocations, \
             "len(tasks)=nLocations, but {0}!={1}".format(len(tasks), nLocations)
 
         # The problem is defined by a set of paths. The paths have the information
@@ -34,16 +34,22 @@ class Problem(object):
 
         # Create locations objects
         self.locations=[]
-        for i in range(nLocations):
+        for i in range(self.nLocations):
             loc=Location(i+1, tasks[i], minimWind[i], maximWind[i])
+            
+            # It is needed in order to perform the calculation of the
+            # arriving time for the locations that sources from startLocation
+            if i+1==self.startLocation:
+                loc.arrivingTime=0
+
             self.locations.append(loc)
 
 
         # Create path objects
         self.paths=[]
         paths_count=1
-        for i in range(nLocations):
-            for j in range(nLocations):
+        for i in range(self.nLocations):
+            for j in range(self.nLocations):
                 if i==j: continue
                 pa=Path(paths_count,self.locations[i], self.locations[j], 
                     distances[i][j])
@@ -56,8 +62,17 @@ class Problem(object):
         for p in self.paths:
             if p.getSource().getId() == from_location:
                 result.append(p)
+                
+        return result
 
-    def getStartLocation(self):
+    def getPathsFromTo(self, from_location, to_location):
+        assert from_location != to_location, ("Travels from-to the same Location " \
+            + "are not allowed ({0})").format(from_location)
+        return filter(lambda x: x.getSource().getId()==from_location and \
+                                x.getDestination().getId()==to_location, \
+                                self.paths)[0]
+                                
+    def getStartLocationId(self):
         return self.startLocation
 
     def getnLocations(self):
@@ -65,6 +80,9 @@ class Problem(object):
 
     def getPaths(self):
         return self.paths
+        
+    def getLocationById(self, location_id):
+        return filter(lambda x: x.getId()==location_id, self.locations)[0]
 
     def print_test(self):
         for p in self.paths:

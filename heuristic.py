@@ -29,8 +29,9 @@ def main(argc, argv):
     if heuristic == "GRASP":
         grasp=Solver_GRASP(problem)
         grasp.Solve(LS_ALFA)
-        if graps.isFeasible():
-            grasp.LocalSearch(LS_NB, LS_ST)
+        if grasp.isFeasible():
+            pass
+            # grasp.LocalSearch(LS_NB, LS_ST)
         else:
             print("GRASP: Solution not feasible")
             exit(0)

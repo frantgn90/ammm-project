@@ -25,7 +25,7 @@ class Location(object):
         return self.arrivingTime
        
     def getWaitingTime(self):
-        assert self.arrivingTime != None, "Location {0} error: Arriving time \
-            must be set before get the Waiting time."
+        assert self.arrivingTime != None, ("Location {0} error: Arriving time " \
+            + "must be set before get the waiting time.").format(self._id)
         return max(0, self.minW-self.arrivingTime)
 
