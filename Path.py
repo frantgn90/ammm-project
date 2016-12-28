@@ -11,6 +11,12 @@ class Path(object):
     def getId(self):
         return self._id
         
+    def setSource(self, sourceLoc):
+        self.sourceLoc = sourceLoc
+        
+    def setDestination(self, destLoc):
+        self.destLoc = destLoc
+        
     def getSource(self):
         return self.sourceLoc
 

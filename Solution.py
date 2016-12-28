@@ -81,6 +81,9 @@ class Solution(object):
         
     def isFeasible(self):
         return self.is_feasible
+    
+    def getSolution(self):
+        return self.solution
         
     def str(self):
         sol_quality=self.getQuality()
@@ -128,4 +131,3 @@ class Solution(object):
         res+="\n"
         
         return res
-

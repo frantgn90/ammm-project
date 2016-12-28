@@ -5,6 +5,7 @@ import random
 
 from Solution import Solution
 from Problem import Problem
+from LocalSearch import LocalSearch
 
 class Solver_GRASP(object):
     def __init__(self, problem):
@@ -86,8 +87,13 @@ class Solver_GRASP(object):
         last_path=self.problem.getPathsFromTo(from_location, to_location)
         self.solution.addCandidate(last_path)
 
-    def LocalSearch(self, neighborhood, strategy):
-        assert False, "TODO: This feature is not done yet."
+    def doLocalSearch(self, neighborhood, strategy):
+        LS=LocalSearch(self.problem, self.solution)
+        
+        if neighborhood == "exchange":
+            LS.exploreNeighborhoodExchange(strategy)
+        elif neighborhood == "reassignement":
+            LS.exploreNeighborhoodReassignement(strategy)
 
     def getSolution(self):
         return self.solution

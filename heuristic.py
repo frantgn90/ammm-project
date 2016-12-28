@@ -8,7 +8,7 @@ from Solver_GRASP import Solver_GRASP
 from Solver_BRKGA import Solver_BRKGA
 from Solution import Solution
 
-LS_NB="replacement"
+LS_NB="exchange" # "reassignement" 
 LS_ST="first-improvement" # "best-improvement"
 LS_ALFA=0.3
 
@@ -30,13 +30,11 @@ def main(argc, argv):
         grasp=Solver_GRASP(problem)
         grasp.Solve(LS_ALFA)
         if grasp.isFeasible():
-            pass
-            # grasp.LocalSearch(LS_NB, LS_ST)
+            grasp.doLocalSearch(LS_NB, LS_ST)
+            print grasp.printSolution()
         else:
             print("GRASP: Solution not feasible")
             exit(0)
-
-        print grasp.printSolution()
 
     elif heuristic == "BRKGA":
         solution = Solver_BRKGA(problem, solution)
