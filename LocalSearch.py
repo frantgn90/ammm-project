@@ -10,26 +10,77 @@ import copy
 class LocalSearch(object):
     def __init__(self, problem, solution):
         self.problem = problem
-        self.solution = copy.deepcopy(solution)
-        
+        self.solution = solution
+       
+    '''
+    The exchange consist on change two locations. The most loaded of the most
+    loaded vehicle with the less loaded of the less loaded vehicle.
+    With this strategy we'll never imprive the number of vehicles but we could
+    improve the lasArrival vehicle.
+    '''
     def exploreNeighborhoodExchange(self, strategy): 
-        # The exchange consist on change two locations. The most loaded of the most
-        # loaded vehicle with the less loaded of the less loaded vehicle.
-        # With this strategy we'll never imprive the number of vehicles but we could
-        # improve the lasArrival vehicle.
-        
-        vehicles = filter(lambda x: len(x) > 0, self.solution.getSolution()) 
-        
+        # Auxiliar function just for sort vehicles
+        def __calculeArrivalTime(vehicle):
+            if len(vehicle) == 0: return 0
+            lastPath = vehicle[-1]
+            
+            return  lastPath.getSource().getarrivingTime() + \
+                    lastPath.getSource().getWaitingTime() + \
+                    lastPath.getSource().getTask() + \
+                    lastPath.getDistance()
+                
         # Sort from most loaded vehicle to less loaded one
-        vehicles = sorted(vehicles, key=self.__calculeArrivalTime, reverse=True)
-        mostLoadedVehicle = vehicle[0]
-        lessLoadedVehicle = vehicle[-1]
+        vehicles = filter(lambda x: len(x) > 0, self.solution.getSolution())
+        vehicles = sorted(vehicles, key=__calculeArrivalTime, reverse=True)
+        mostLoadedVehicle = vehicles[0]
         
+        # Every location visited by the most lodead vehicle is prone to be exchanged
+        # but the most desirable situation is that the location with the highest task
+        # will be changed
+        mostLoadedVehicleLocations = []
+        for path in mostLoadedVehicle: 
+            mostLoadedVehicleLocations.append(path.getSource())
+            
+        mostLoadedVehicleLocations = sorted(mostLoadedVehicleLocations, 
+            key=lambda x: x.getTask(), 
+            reverse=True)
+        
+        # The rest of the locations for the other vehicles that are prone to be exchanged
+        # ordered from small to big task
+        restOfLocations = []
+        for v_i in range(1, len(vehicles)): 
+            for p in vehicles[v_i]: restOfLocations.append(p.getSource())
+            
+        restOfLocations = sorted(restOfLocations, 
+            key=lambda x: x.getTask(), 
+            reverse=False)
+        
+        # Look for all the neighborhood
+        best_solution = self.solution
+        for loc_a in mostLoadedVehicleLocations:
+            for loc_b in restOfLocations:
+                # Avoiding changes with startLocation
+                if loc_a.getId() == self.problem.getStartLocationId: continue
+                if loc_b.getId() == self.problem.getStartLocationId: continue
+                
+                change = ("exchange", loc_a, loc_b)
+                feasible, q = self.solution.evaluateNeighbor(change, self.problem)
+                if not feasible: continue
+                
+                if q < best_solution.getQuality():
+                    new_solution = copy.deepcopy(self.solution)
+                    new_solution.performChange(change, self.problem)
+                    
+                    if strategy == "first-improvement":
+                        return new_solution
+                    elif strategy == "best-improvement":
+                        best_solution = new_solution
+                        
+        return best_solution
+        
+        '''
         i_bigLocation, dummy = self.__getMaxMinLoadedLocation(mostLoadedVehicle)
         dummy, i_smallLocation = self.__getMaxMinLoadedLocation(lessLoadedVehicle)
-        
-        # NOTE: The most loaded location never will be the startingLocatin
-        # because the task for this one must be 0
         
         # Exchanging locations
         bigLocation = mostLoadedVehicle[i_bigLocation].getSource()
@@ -56,12 +107,17 @@ class LocalSearch(object):
         
         feasible  = self.__recalculeSolutionFrom(mostLoadedVehicle, i_bigLocation-1)
         feasible &= self.__recalculeSolutionFrom(lessLoadedVehicle, i_smallLocation-1)
+        '''
         
-        
+    def exploreNeighborhoodReassignement(self, strategy):
+        print("TODO: This feature is not done.")
+        pass
+      
+    ''' 
     def __recalculeSolution(self, vehicle, from_location):
         max_load = 0
 
-        for i in range(from_location, len(vehicle))
+        for i in range(from_location, len(vehicle)):
             arriving_time = vehicle[i].getSource().getarrivingTime() + \
                             vehicle[i].getSource().getWaitingTime() + \
                             vehicle[i].getSource().getTask() + \
@@ -73,19 +129,6 @@ class LocalSearch(object):
             vehicle[i].getDestination().arrivingTime = arriving_time
             
         return True
-        
-    def exploreNeighborhoodReassignement(self, strategy):
-        
-        pass
-        
-    def __calculeArrivalTime(self,vehicle):
-        if len(vehicle) == 0: return 0
-        lastPath = vehicle[-1]
-        
-        return  lastPath.getSource().getarrivingTime() + \
-                lastPath.getSource().getWaitingTime() + \
-                lastPath.getSource().getTask() + \
-                lastPath.getDistance()
         
     def __getMaxMinLoadedLocation(self, vehicle):
         min_load = float.inf
@@ -107,3 +150,4 @@ class LocalSearch(object):
                 min_load_loc = i
                 
         return max_load_loc, min_load_loc
+    '''

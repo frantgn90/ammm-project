@@ -28,8 +28,6 @@ class Solution(object):
         # represents a vehicle.
         self.solution= [[] for i in range(nLocations)]
         
-        
-        
     def addCandidate(self, candidate):
         assert self.solution != None, "Solution is not initialized. Please call " \
             + "initSolution(nLocations) function"
@@ -63,6 +61,120 @@ class Solution(object):
         
         if self.visitedLocations==(self.nLocations-1):
             self.is_feasible = True
+    
+    def evaluateNeighbor(self, change, problem):
+        assert self.is_feasible == True, "Error trying to evaluate a neighbor " \
+            " without having a feasible solution."
+            
+        neighbor = change[0]
+        if neighbor == "exchange":
+            a_location = change[1]
+            b_location = change[2]
+            
+            lastArrival = 0
+            for vehicle in self.solution:
+                vehicleArrival = 0
+                for path in vehicle:
+                    the_path = path
+                    same_path = False
+                    path_source = path.getSource()
+                    path_destination = path.getDestination()
+                    
+                    # Replace path_source if needed
+                    # Replace path_destination if needed
+                    if path_source.getId() == a_location.getId():
+                        path_source = b_location
+                    elif path_source.getId() == b_location.getId():
+                        path_source = a_location
+                    
+                    if path_destination.getId() == a_location.getId():
+                        path_destination = b_location
+                    elif path_destination.getId() == b_location.getId():
+                        path_destination = a_location
+                    else:
+                        same_path = True
+                
+                    if not same_path:
+                        the_path = problem.getPathsFromTo(path_source.getId(),path_destination.getId())
+                        
+                    vehicleArrival += path_source.getTask()
+                    vehicleArrival += the_path.getDistance()
+                    vehicleArrival = max(vehicleArrival, path_destination.getminW())
+                    
+                    if vehicleArrival > 720:
+                        return False, None
+                    elif vehicleArrival > path_destination.getmaxW():
+                        return False, None
+                    
+                if vehicleArrival > lastArrival:
+                    lastArrival = vehicleArrival
+                    
+            return True, self.nVehicles*BIGM + lastArrival
+                
+        elif neighbor == "reassignement":
+            assert False, "TODO"
+        else:
+            assert False, "The neighborhood {0} does not exist.".format(neighbor)
+        
+    def performChange(self, change, problem):
+        neighbor = change[0]
+        
+        if neighbor == "exchange":
+            a_location = change[1]
+            b_location = change[2]
+            
+            lastArrival = 0
+            for vehicle in self.solution:
+                vehicleArrival = 0
+                p_counter = 0
+                for path in vehicle:
+                    the_path = path
+                    same_path = False
+                    path_source = path.getSource()
+                    path_destination = path.getDestination()
+                    
+                    # Replace path_source if needed
+                    # Replace path_destination if needed
+                    if path_source.getId() == a_location.getId():
+                        path_source = b_location
+                    elif path_source.getId() == b_location.getId():
+                        path_source = a_location
+                    
+                    if path_destination.getId() == a_location.getId():
+                        path_destination = b_location
+                    elif path_destination.getId() == b_location.getId():
+                        path_destination = a_location
+                    else:
+                        same_path = True
+                
+                    if not same_path:
+                        the_path = problem.getPathsFromTo(path_source.getId(),path_destination.getId())
+                    
+                    # Perform the change
+                    vehicle[p_counter] = the_path
+                    
+                    vehicleArrival += path_source.getTask()
+                    vehicleArrival += the_path.getDistance()
+                    vehicleArrival = max(vehicleArrival, path_destination.getminW())
+                    
+                    if vehicleArrival > 720:
+                        assert False, "ERROR: Before perform change you have to ensure" \
+                            + " that this change is feasible."
+                    elif vehicleArrival > path_destination.getmaxW():
+                        assert False, "ERROR: Before perform change you have to ensure" \
+                            + " that this change is feasible."
+                    
+                    p_counter += 1
+                    
+                if vehicleArrival > lastArrival:
+                    lastArrival = vehicleArrival
+                    
+            # The number of vehicles is always the same
+            self.lastArrived = lastArrival
+        elif neighbor == "reassignement":
+            assert False, "TODO"
+        else:
+            assert False, "The neighborhood {0} does not exist.".format(neighbor)
         
     def getTravelTime(self):
         return self.TravelTime
