@@ -31,6 +31,7 @@ class LocalSearch(object):
                 
         # Sort from most loaded vehicle to less loaded one
         vehicles = filter(lambda x: len(x) > 0, self.solution.getSolution())
+        
         vehicles = sorted(vehicles, key=__calculeArrivalTime, reverse=True)
         mostLoadedVehicle = vehicles[0]
         
@@ -39,8 +40,9 @@ class LocalSearch(object):
         # will be changed
         mostLoadedVehicleLocations = []
         for path in mostLoadedVehicle: 
-            mostLoadedVehicleLocations.append(path.getSource())
-            
+            if path.getSource().getId() != self.problem.getStartLocationId():
+                mostLoadedVehicleLocations.append(path.getSource())
+                    
         mostLoadedVehicleLocations = sorted(mostLoadedVehicleLocations, 
             key=lambda x: x.getTask(), 
             reverse=True)
@@ -49,7 +51,9 @@ class LocalSearch(object):
         # ordered from small to big task
         restOfLocations = []
         for v_i in range(1, len(vehicles)): 
-            for p in vehicles[v_i]: restOfLocations.append(p.getSource())
+            for p in vehicles[v_i]: 
+                if p.getSource().getId() != self.problem.getStartLocationId():
+                    restOfLocations.append(p.getSource())
             
         restOfLocations = sorted(restOfLocations, 
             key=lambda x: x.getTask(), 
@@ -59,15 +63,17 @@ class LocalSearch(object):
         best_solution = self.solution
         for loc_a in mostLoadedVehicleLocations:
             for loc_b in restOfLocations:
-                # Avoiding changes with startLocation
-                if loc_a.getId() == self.problem.getStartLocationId: continue
                 if loc_b.getId() == self.problem.getStartLocationId: continue
                 
                 change = ("exchange", loc_a, loc_b)
                 feasible, q = self.solution.evaluateNeighbor(change, self.problem)
+                '''
+                print ("Exchanging {0}<->{1} . Feasible: {2} . Quality: {3}"
+                    .format(loc_a.getId(), loc_b.getId(), str(feasible), q))
+                '''
                 if not feasible: continue
                 
-                if q < best_solution.getQuality():
+                if q <= best_solution.getQuality():
                     new_solution = copy.deepcopy(self.solution)
                     new_solution.performChange(change, self.problem)
                     

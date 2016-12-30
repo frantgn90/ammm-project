@@ -91,7 +91,7 @@ class Solver_GRASP(object):
         LS=LocalSearch(self.problem, self.solution)
         
         if neighborhood == "exchange":
-            LS.exploreNeighborhoodExchange(strategy)
+            self.solution = LS.exploreNeighborhoodExchange(strategy)
         elif neighborhood == "reassignement":
             LS.exploreNeighborhoodReassignement(strategy)
 

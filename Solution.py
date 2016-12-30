@@ -76,23 +76,26 @@ class Solution(object):
                 vehicleArrival = 0
                 for path in vehicle:
                     the_path = path
-                    same_path = False
                     path_source = path.getSource()
                     path_destination = path.getDestination()
+                    
+                    same_path = True
                     
                     # Replace path_source if needed
                     # Replace path_destination if needed
                     if path_source.getId() == a_location.getId():
                         path_source = b_location
+                        same_path = False
                     elif path_source.getId() == b_location.getId():
                         path_source = a_location
-                    
+                        same_path = False
+                        
                     if path_destination.getId() == a_location.getId():
                         path_destination = b_location
+                        same_path = False
                     elif path_destination.getId() == b_location.getId():
                         path_destination = a_location
-                    else:
-                        same_path = True
+                        same_path = False
                 
                     if not same_path:
                         the_path = problem.getPathsFromTo(path_source.getId(),path_destination.getId())
@@ -129,23 +132,26 @@ class Solution(object):
                 p_counter = 0
                 for path in vehicle:
                     the_path = path
-                    same_path = False
                     path_source = path.getSource()
                     path_destination = path.getDestination()
+                    
+                    same_path = True
                     
                     # Replace path_source if needed
                     # Replace path_destination if needed
                     if path_source.getId() == a_location.getId():
                         path_source = b_location
+                        same_path = False
                     elif path_source.getId() == b_location.getId():
                         path_source = a_location
+                        same_path = False
                     
                     if path_destination.getId() == a_location.getId():
                         path_destination = b_location
+                        same_path = False
                     elif path_destination.getId() == b_location.getId():
                         path_destination = a_location
-                    else:
-                        same_path = True
+                        same_path = False
                 
                     if not same_path:
                         the_path = problem.getPathsFromTo(path_source.getId(),path_destination.getId())
@@ -226,7 +232,7 @@ class Solution(object):
         res+= "\n"
         
         # Routes
-        
+        '''
         for vehicle in self.solution:
             res+= "*"+" "*(WIDTH_PRINT-2)+"*\n"        
             for path in vehicle:
@@ -238,8 +244,9 @@ class Solution(object):
                     loc_s, 
                     loc_d,
                     " "*(WIDTH_PRINT-4-LEFT_MARGIN-len(loc_s)-len(loc_d)))
-                    
+            
         res+= "*"*WIDTH_PRINT      
         res+="\n"
+        '''
         
         return res
