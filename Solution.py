@@ -115,7 +115,61 @@ class Solution(object):
             return True, self.nVehicles*BIGM + lastArrival
                 
         elif neighbor == "reassignement":
-            assert False, "TODO"
+            location_to_reassign = change[1]
+            path_to_inject = change[2] 
+            
+            # e.g. loc = 1, pti = 4->5
+            # neighbor = 4->1->5
+            
+            evalVehicles = self.nVehicles
+            lastArrival = 0
+            for vehicle in self.solution:
+                vehicleArrival = 0
+                waiting_source = None
+                
+                for path in vehicle:
+                    the_path = path
+                    path_source = path.getSource()
+                    path_destination = path.getDestination()
+                    
+                    # Remove the location_to_reassign from its original place
+                    if path_destination.getId() == location_to_reassign.getId():
+                        waiting_source = path_source
+                        continue
+                    elif path.getSource().getId() == location_to_reassign.getId():
+                        assert waiting_source != None, "ERROR: Something wrong :: {0}"\
+                            .format(path.getSource().getId())
+                        
+                        # It means that the reassignement have achieved the reduction of one vehicle.
+                        if waiting_source.getId() == path_destination.getId():
+                            evalVehicles -= 1
+                            break
+                            
+                        the_path = problem.getPathsFromTo(waiting_source.getId(),path_destination.getId())
+                        waiting_source = None
+                        
+                    if path.getId() == path_to_inject.getId():
+                        path_1 = problem.getPathsFromTo(path_source.getId(), location_to_reassign.getId())
+                        the_path = problem.getPathsFromTo(location_to_reassign.getId(), path_destination.getId())
+                        
+                        vehicleArrival += path_1.getSource().getTask()
+                        vehicleArrival += path_1.getDistance()
+                        vehicleArrival = max(vehicleArrival, path_1.getDestination().getminW())
+                        
+                    vehicleArrival += the_path.getSource().getTask()
+                    vehicleArrival += the_path.getDistance()
+                    vehicleArrival = max(vehicleArrival, the_path.getDestination().getminW())
+                    
+                    if vehicleArrival > 720:
+                        return False, None
+                    elif vehicleArrival > the_path.getDestination().getmaxW():
+                        return False, None
+                    
+                if vehicleArrival > lastArrival:
+                    lastArrival = vehicleArrival
+                    
+            return True, evalVehicles*BIGM + lastArrival
+            
         else:
             assert False, "The neighborhood {0} does not exist.".format(neighbor)
         
@@ -178,7 +232,81 @@ class Solution(object):
             # The number of vehicles is always the same
             self.lastArrived = lastArrival
         elif neighbor == "reassignement":
-            assert False, "TODO"
+            location_to_reassign = change[1]
+            path_to_inject = change[2] 
+            
+            # e.g. loc = 1, pti = 4->5
+            # neighbor = 4->1->5
+            
+            lastArrival = 0
+            i_vehicle = 0
+            vehicles_to_del = []
+            for vehicle in self.solution:
+                vehicleArrival = 0
+                waiting_source = None
+                path_added = False
+                i_path = 0
+                for path in vehicle:
+                    if path_added: path_added=False; continue
+                    
+                    the_path = path
+                    path_source = path.getSource()
+                    path_destination = path.getDestination()
+                    
+                    # Remove the location_to_reassign from its original place
+                    if path_destination.getId() == location_to_reassign.getId():
+                        waiting_source = path_source
+                        continue
+                    elif path.getSource().getId() == location_to_reassign.getId() and waiting_source != None:
+                        assert waiting_source != None, "ERROR: Something wrong :: {0}"\
+                            .format(path.getSource().getId())
+                        
+                        if waiting_source.getId() == path_destination.getId():
+                            vehicles_to_del.append(i_vehicle)
+                            break
+                            
+                        the_path = problem.getPathsFromTo(waiting_source.getId(),path_destination.getId())
+                        self.solution[i_vehicle][i_path] = the_path
+                        del self.solution[i_vehicle][i_path-1]
+                        waiting_source = None
+                        
+                    if path.getId() == path_to_inject.getId():
+                        path_1 = problem.getPathsFromTo(path_source.getId(), location_to_reassign.getId())
+                        the_path = problem.getPathsFromTo(location_to_reassign.getId(), path_destination.getId())
+                        
+                        self.solution[i_vehicle][i_path] = path_1
+                        self.solution[i_vehicle].insert(i_path+1, the_path)
+                        
+                        path_added = True
+                        
+                        vehicleArrival += path_1.getSource().getTask()
+                        vehicleArrival += path_1.getDistance()
+                        vehicleArrival = max(vehicleArrival, path_1.getDestination().getminW())
+                        
+                    vehicleArrival += the_path.getSource().getTask()
+                    vehicleArrival += the_path.getDistance()
+                    vehicleArrival = max(vehicleArrival, the_path.getDestination().getminW())
+                    
+                    if vehicleArrival > 720:
+                        assert False, "ERROR: Before perform change you have to ensure" \
+                            + " that this change is feasible."
+                    elif vehicleArrival > the_path.getDestination().getmaxW():
+                        assert False, "ERROR: Before perform change you have to ensure" \
+                            + " that this change is feasible."
+                        
+                    i_path += 1
+                    
+                if vehicleArrival > lastArrival:
+                    lastArrival = vehicleArrival
+                    
+                i_vehicle += 1
+                    
+            # Updating solution quality
+            self.lastArrived = lastArrival
+            for v in vehicles_to_del:
+                del self.solution[v]
+                self.nVehicles -= 1
+                
         else:
             assert False, "The neighborhood {0} does not exist.".format(neighbor)
         

@@ -9,6 +9,7 @@ from LocalSearch import LocalSearch
 
 class Solver_GRASP(object):
     def __init__(self, problem):
+        #random.seed(123123)
         self.problem=problem
         self.visitedLocations=[]
         self.solution=Solution(problem.getnLocations(), 
@@ -93,7 +94,7 @@ class Solver_GRASP(object):
         if neighborhood == "exchange":
             self.solution = LS.exploreNeighborhoodExchange(strategy)
         elif neighborhood == "reassignement":
-            LS.exploreNeighborhoodReassignement(strategy)
+            self.solution = LS.exploreNeighborhoodReassignement(strategy)
 
     def getSolution(self):
         return self.solution

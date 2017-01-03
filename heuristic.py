@@ -8,8 +8,8 @@ from Solver_GRASP import Solver_GRASP
 from Solver_BRKGA import Solver_BRKGA
 from Solution import Solution
 
-LS_NB="exchange" # "reassignement" 
-LS_ST="first-improvement" # "best-improvement"
+LS_NB="reassignement" # "exchange" 
+LS_ST="best-improvement" # "first-improvement"
 LS_ALFA=0.3
 
 def main(argc, argv):
