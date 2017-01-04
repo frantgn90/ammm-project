@@ -331,6 +331,96 @@ class Solution(object):
     def getSolution(self):
         return self.solution
         
+    #################################
+    ## Special functions for BRKGA ##
+    #################################
+    
+    #####################################################################################
+    ## The mapping from chromosome to solution space is not an immediat mapping,       ##
+    ## but needs some transformations, because a random chromosome can not be mapped   ##
+    ## directly to a trivial solution.                                                 ##
+    ##                                                                                 ##
+    ## If the chromosome is obtained via <encodeToBRKA> the representation is:         ##
+    ## - Every position gen of the chromosome represents one location                  ##
+    ## - The value of the chromose indicates the previous source location from where   ##
+    ##   the vehicle is comming.                                                       ##
+    ## - The starting location does not have any previoues location, i.e. 0.           ##
+    #####################################################################################
+    
+    def encodeToBRKGA(self):
+        chromosome = [0]*self.nLocations
+        order_divisor = 0
+        locs = self.nLocations
+        while locs > 0:
+            order_divisor += 1
+            locs /= 10
+        
+        for vehicle in self.solution:
+            # The last path is not taked into account intetionally in order to
+            # keep the gen for the startLocation as 0
+            for i in range(len(vehicle)-1)
+                path = vehicle[i]
+                from_location = path.getSource().getId()
+                to_location = path.getDestination().getId()
+                chromosome[to_location] = from_location/10**order_divisor # Should be from 0 to 1.0
+            
+        return chromosome
+        
+    def fromChromosome(self, chromosome):
+        # Chromosome pre-process: The first step of the decoder is to do the 
+        # needed transformations from the raw chromosome in order to obtain a 
+        # depurated one that can be mapped to a solution in terms of graph constraints.
+        
+        # Step 1: Get a natural value from chromosome.
+        order_divisor = 0
+        locs = self.nLocations
+        while locs > 0: order_divisor += 1; locs /= 10
+            
+        depured_ch = [x * 10**order_divisor for x in chromosome]
+        
+        # Step 2: All predecessors should exists in the problem, then have to be
+        # less or equal the number of locations
+        depured_ch = [x % (self.nLocations+1) for x in depured_ch]
+        
+        # Step 3: The only origin that can be repeated is the starting location
+        not_seen = list(range(self.nLocations+1))
+        seen = []
+        
+        i = 0
+        for loc in depured_ch:
+            if loc in seen:
+                depured_ch[i] = not_seen[0]
+                seen.append(not_seen[0])
+                del not_seen[0]
+            elif loc != self.startLocationId:
+                seen.append(loc)
+                del not_seen[not_seen.index(loc)]
+                
+            i += 1
+            
+            
+        # Step 4: There can not be cycles that implies just one location. Then
+        # gens with a value equal to its index must be forbidden.
+        i = 0
+        for loc in depured_ch:
+            if loc == (i+1):
+                to_swap = (i+1)%len(depured_ch)
+                depured_ch[i] = depured_ch[to_swap]
+                depured_ch[to_swap] = (i+1)
+        
+        # Step 5: The chromosome only have to have one 0 i.e. one startLocation.
+        # In this step, if there is a 0 then a swap ins performed if needed, if not
+        # a 0 is injected in the startLocation gen.
+        
+        if not 0 in depured_ch:
+            depured_ch[self.startLocationId] = 0
+        else:
+            depured_ch[depured_ch.index(0)] = depured_ch[self.startLocationId]
+            depured_ch[self.startLocationId] = 0
+            
+        # Step 6: Cycles that are not implying the startLocation are not allowed
+        
+        
     def str(self):
         sol_quality=self.getQuality()
         n_vehicles=self.getnVehicles()
