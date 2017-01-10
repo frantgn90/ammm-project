@@ -1,0 +1,13 @@
+\contentsline {chapter}{\numberline {1}Introduction}{3}
+\contentsline {section}{\numberline {1.1}Structure of the document}{3}
+\contentsline {chapter}{\numberline {2}Problem definition}{1}
+\contentsline {section}{\numberline {2.1}Description}{1}
+\contentsline {section}{\numberline {2.2}Formal definition}{1}
+\contentsline {subsection}{\numberline {2.2.1}Input data}{1}
+\contentsline {subsection}{\numberline {2.2.2}Decission variables}{2}
+\contentsline {chapter}{\numberline {3}ILP model}{3}
+\contentsline {section}{\numberline {3.1}Input data}{3}
+\contentsline {chapter}{\numberline {4}Meta-heuristics}{4}
+\contentsline {chapter}{\numberline {5}Comparissons}{5}
+\contentsline {chapter}{\numberline {6}Discussion}{6}
+\contentsline {chapter}{\numberline {7}Conclusions}{7}

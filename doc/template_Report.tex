@@ -1,0 +1,135 @@
+\documentclass[]{report}
+
+\usepackage{amsfonts}
+% or
+\usepackage{amssymb}
+\usepackage{amsmath}
+%\usepackage{minted}
+
+\usepackage[a4paper,left=2.9cm,right=2.9cm,top=3cm,bottom=2.5cm,headheight=110pt]{geometry}
+
+% Title Page
+\title{{\Huge Route optimization for a fleet of vehicles with temporal constraints} \\
+Algorithmics Methods and Mathematicals Models \\
+Master in Research and Innovation - UPC}
+\author{Juan Francisco Mart\'inez Vera \\
+{\tt juan.francisco.martinez@est.fib.upc.edu}}
+
+
+\begin{document}
+\maketitle
+
+
+\begin{abstract}
+	Optimization problems can appear in almost all situations on life. There are specially important those ones that appears on the industry because if we can achieve an optimal solution, we will improve the efficiency of the industrial process and then get lower manufacturing cost. This improvement of the costs have an effect on the competitiveness of the companies and on the final quality of their products and there are always good news for the customers. The challeging part is that those kind of problem have a really high computational complexity therefore there are several methods to face with them. By one hand we have the, let's say, always-optimality methods that obtain the optimal solution but without taking into account the huge amount of time that it could imply. e.g. ILP\footnote{Integer Linear Programming}. By the other hand we have those methods that concerns about the execution time and are looking for a tradeof between the exeution time and the quality of the solution\footnote{The distance to the optimal}.
+	
+	In this pages will be shown this two approaches in order to get the optimal routes for a fleet of vehicles taking into account temporal constraints.
+	
+\tableofcontents
+	
+\chapter{Introduction}
+	Optimization problems can appear in almost all situations on life. There are specially important those ones that appears on the industry because if we can achieve an optimal solution, we will improve the efficiency of the industrial process and then get lower manufacturing cost. This improvement of the costs have an effect on the competitiveness of the companies and on the final quality of their products. The challeging part is that those kind of problem have a really high computational complexity therefore there are several methods to face with them. By one hand we have the, let's say, always-optimality methods that obtain the optimal solution but without taking into account the huge amount of time that it could imply. e.g. ILP\footnote{Integer Linear Programming}. By the other hand we have those methods that concerns about the execution time and are looking for a tradeof between the exeution time and the quality of the solution\footnote{The distance to the optimal}.
+	
+	In this project has been developed an Integer Linear Programming model in order to optimize the routes for a fleet of vehicles with temporal constraints derived from the distance between locations and from the tasks that has to be done for every location. Also have been developed different meta-heuristic strategies in order to get results more efficiently in terms of exeuction time even if there are not the optimal but close enough. Finnaly comparissons in term of execution time and solution quality have been done. 
+	
+\section{Structure of the document}
+	The structure of this document is the following: The problem definition is done in chapter \ref{ch:problem_definition}. Here it is explained the problem that is faced, which constraints is needed to take into account and what we want to optimize. At chapter \ref{ch:ilp_model} is explained the mathematical model that has been developed, i.e. the decission variables and also the constraints with a mathematical nomenclature. After this chapter, at chapter \ref{ch:meta_heuristics} is explained how it has been used the heuristics approach in order to face with the problem, two meta-heuristics has been used: GRASP\footnote{Greedy Adaptative Search Procedure} and BRKGA\footnote{Biased Random-Key Genetic Algorithm}. After perform several executions for those approaches, a comparisson in terms of time and quality of the result is done at chapter \ref{ch:comparisson}. Finnally a discussion about the results obtained is done at chapter \ref{ch:discussion} and the conclusions of the project are explained at chapter \ref{ch:conclusions}
+\end{abstract}
+
+\chapter{Problem definition}\label{ch:problem_definition}
+\section{Description}
+We have been asked to help one logistic company in the design of the daily routes of its fleet of vehicles. The workload for every day consist in some tasks that have to be done at a different locations, therefore, the problem is to identify the optimal routes for the minimum number of vehicles in order to perform all the work in time, i.e. starting at 8 a.m. and finalizing before 8 p.m. 
+
+For that purpose we are given a set of locations and a start location $l_{s}$ where all the vehicles will start. For our point of view, the locations are not needed at all but we need the distance in terms of time between all of them. Because that we will be provided by the $dist_{l_{1},l_{2}}$ input data.
+
+As is already mentioned, in every location (but not in $l_{s}$) there is a task that has to be done, then, also the information about how many time is needed for every task is provided as input data. We are talking about $task_{l}$.
+
+Finally one more constraint is imposed by this logistic company. Every task has to be done but can not be started at any hour of the day. There is a temporal windows for every task that describes when an specific task can be started. This windows consists on a lower boundary $min_{l}$ and on a upper boundary $max_{l}$. Then the starting time can not be before $min_{l}$ and after $max_{l}$.
+
+Considering that the company has an unlimited number of vehicles, the goal of the project is to find the minimum number of vehicles needed to visit all locations and perform all tasks, and define their routes. Given two solutions with the same number of vehicles it is preferred the one in which the latest vehicle arrives at its final destination sooner.
+
+\section{Formal definition}
+
+In this section is defined the input variables, decision variables, the constraints and also the objective of this optimization problem.
+According the definition above, this variables are provided and describes a single instance of this problem.
+
+\subsection{Input data}
+
+The following list describe all the input data that is provided.
+\begin{itemize}
+	\item Number of locations: Is the number of locations that the vehicles have visit.
+	$$
+	n \in \mathbb{N}
+	$$ 
+	From here we can define the $L$ set that is the locations set.
+	\item Starting location: The location where all vehicles are placed at the beginning of times.
+	$$
+	l_{s} \in L
+	$$
+	\item Distances: Are the distances in minutes from one locations to the other. It is needed in order to know the time that a route spends. Note that when $a=b$, then $dist_{l_{a},l_{b}}=0$
+	$$
+	dist_{l_{a},l_{b}} \quad \forall l_{a},l_{b} \in L
+	$$
+	\item Lower boundary for the temporal windows for every location. It indicates from when a task can be executed. If one vehicles arrives before this time, it must wait. The temporal unit are the minutes. This minimum windows can be at most 720 that is the journey time in minutes ($8h*60min/h = 720min$)
+	$$
+	min_{l} \in [0, 720] \quad \forall l \in L
+	$$
+	\item Upper boundary for the temporal windows for every location. It indicates until when a task can be executed. Take into account that does not have sense that $max_{l} < min_{l}$
+	$$
+	max_{l} \in [min_{l}, 720] \quad \forall l \in L
+	$$
+	\item Time that a task spends for every location.
+	$$
+	task_{l} \in [0, 720], \forall l \in L
+	$$
+\end{itemize}
+	
+\subsection{Decission variables}
+
+We are facing this problem in order to optimize the solution. The solution consists on the description of the routes that the fleet of vehicles have to be done. On the next lines a relation of the required decission variables are explained.
+
+\begin{itemize}
+	\item We can represent the towns and routes as a directed weighted complete graph, then, we can describe a route of every vehicle by mean of a set of edges that describes a cycle that imples the $l_{s}$ node. 
+	\begin{gather}
+	G=(V,A) \quad where \quad \text{V: set of nodes, A: set of directed edges} \\
+	|V|=n \\
+	cycle_{i} \subseteq A, \text{ s.t. } 1 \leq i \leq \text{Number of cycles} \\
+	cycle_{i} \cap cycle_{j} = \varnothing \text{ s.t. } i \neq j
+	\end{gather}
+	In equation 2.3 and 2.4 are defining this decission variable and will be constraints in the ILP model at \ref{ch:ilp_model} chapter. They are defining that our decission variable is a set of sets that are subsets of $A$, i.e. are sets of directed edges. The 2.4 equation is saying that we can not have two routes that have a common route.
+	
+	\item One of the most important decission variables is the numbers of vehicles needed. It will be equal as the number of cycles in the graph.
+	
+	\item From the company requirements we know that if there are two possible solutions, we have to take this one that returns before to the $l_{s}$. Then it is as well a decission variable and depends directly on the taked routes.
+\end{itemize}
+
+The decission variables above are the basic ones. As you will see on chapter \ref{ch:ilp_model} more decissions variables are used for the ILP model in order to calcule good values for the times of the routes.
+
+\chapter{ILP model}\label{ch:ilp_model}
+
+ILP\footnote{Integer Linear Programming} is the first of the two methods that has been used in this project. This method is always concerned on having the optimal solution without taking into account the amount of computational resources needed. This model is developed in CPLEX and the model implemented is described at the next sections.
+
+\section{Input data}
+
+From chapter \ref{ch:problem_definition} we already know which is the data that is provided. Now we need them in an specific shape in order to deal with them in CPLEX.
+
+\begin{itemize}
+	\item Number of locations
+	%\begin{minted}{java}
+	%	dvar int nVehicles;
+	%\end{minted}
+	\item Taked routes by the vehicles. The subsets of directed edges described in the previous chapter is represented by a boolean matrix in CPLEX. The rows of the matrix are the source of the route and the columns are the target location. Therefore, if a cell is set to 1 means that this route has been taked.
+	%\begin{minted}
+	% dvar boolean tracked[n in N, n2 in N];
+	%\end{minted}
+\end{itemize}
+
+\chapter{Meta-heuristics}\label{ch:meta_heuristics}
+
+\chapter{Comparissons}\label{ch:comparisson}
+
+\chapter{Discussion}\label{ch:discussion}
+
+\chapter{Conclusions}\label{ch:conclusions}
+
+\end{document}          
