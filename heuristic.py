@@ -37,7 +37,14 @@ def main(argc, argv):
             exit(0)
 
     elif heuristic == "BRKGA":
-        solution = Solver_BRKGA(problem, solution)
+        brkga=Solver_BRKGA(problem)
+        brkga.Solve()
+        if brkga.isFeasible():
+            print brkga.printSolution()
+        else:
+            print("BRKGA: Solution not feasible")
+            exit(0)
+        
     else:
         assert False, "{0} heuristic is not developed".format(heuristic)
 
