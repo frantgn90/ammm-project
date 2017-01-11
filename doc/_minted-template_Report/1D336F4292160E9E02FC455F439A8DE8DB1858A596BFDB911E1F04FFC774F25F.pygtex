@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+	\PYG{n}{dvar} \PYG{n}{boolean} \PYG{n}{tracked}\PYG{p}{[}\PYG{n}{n} \PYG{o+ow}{in} \PYG{n}{N}\PYG{p}{,} \PYG{n}{n2} \PYG{o+ow}{in} \PYG{n}{N}\PYG{p}{];}
+\end{Verbatim}

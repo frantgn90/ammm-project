@@ -1,13 +1,22 @@
 \contentsline {chapter}{\numberline {1}Introduction}{3}
-\contentsline {section}{\numberline {1.1}Structure of the document}{3}
+\contentsline {section}{\numberline {1.1}Document structure}{3}
 \contentsline {chapter}{\numberline {2}Problem definition}{1}
 \contentsline {section}{\numberline {2.1}Description}{1}
 \contentsline {section}{\numberline {2.2}Formal definition}{1}
-\contentsline {subsection}{\numberline {2.2.1}Input data}{1}
-\contentsline {subsection}{\numberline {2.2.2}Decission variables}{2}
-\contentsline {chapter}{\numberline {3}ILP model}{3}
-\contentsline {section}{\numberline {3.1}Input data}{3}
-\contentsline {chapter}{\numberline {4}Meta-heuristics}{4}
-\contentsline {chapter}{\numberline {5}Comparissons}{5}
-\contentsline {chapter}{\numberline {6}Discussion}{6}
-\contentsline {chapter}{\numberline {7}Conclusions}{7}
+\contentsline {subsection}{\numberline {2.2.1}A relaxed TSP with temporal constraints}{1}
+\contentsline {subsection}{\numberline {2.2.2}Input data}{2}
+\contentsline {subsubsection}{Graph input data}{2}
+\contentsline {subsubsection}{Time constraints input data}{2}
+\contentsline {subsection}{\numberline {2.2.3}Constratints definition}{3}
+\contentsline {subsubsection}{Graph constraints}{3}
+\contentsline {subsubsection}{Time constraints}{3}
+\contentsline {subsection}{\numberline {2.2.4}Objective function definition}{3}
+\contentsline {chapter}{\numberline {3}ILP model}{4}
+\contentsline {section}{\numberline {3.1}Input data}{4}
+\contentsline {section}{\numberline {3.2}Decission variables}{4}
+\contentsline {section}{\numberline {3.3}Objective function}{5}
+\contentsline {section}{\numberline {3.4}Constraints}{5}
+\contentsline {chapter}{\numberline {4}Meta-heuristics}{6}
+\contentsline {chapter}{\numberline {5}Comparissons}{7}
+\contentsline {chapter}{\numberline {6}Discussion}{8}
+\contentsline {chapter}{\numberline {7}Conclusions}{9}

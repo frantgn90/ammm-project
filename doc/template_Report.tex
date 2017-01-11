@@ -4,7 +4,9 @@
 % or
 \usepackage{amssymb}
 \usepackage{amsmath}
-%\usepackage{minted}
+\usepackage{minted}
+
+\usepackage{xcolor}
 
 \usepackage[a4paper,left=2.9cm,right=2.9cm,top=3cm,bottom=2.5cm,headheight=110pt]{geometry}
 
@@ -19,6 +21,8 @@ Master in Research and Innovation - UPC}
 \begin{document}
 \maketitle
 
+\newcommand{\localtextbulletone}{\textcolor{gray}{\raisebox{.50ex}{\rule{.6ex}{.6ex}}}}
+\renewcommand{\labelitemi}{\localtextbulletone}
 
 \begin{abstract}
 	Optimization problems can appear in almost all situations on life. There are specially important those ones that appears on the industry because if we can achieve an optimal solution, we will improve the efficiency of the industrial process and then get lower manufacturing cost. This improvement of the costs have an effect on the competitiveness of the companies and on the final quality of their products and there are always good news for the customers. The challeging part is that those kind of problem have a really high computational complexity therefore there are several methods to face with them. By one hand we have the, let's say, always-optimality methods that obtain the optimal solution but without taking into account the huge amount of time that it could imply. e.g. ILP\footnote{Integer Linear Programming}. By the other hand we have those methods that concerns about the execution time and are looking for a tradeof between the exeution time and the quality of the solution\footnote{The distance to the optimal}.
@@ -32,7 +36,7 @@ Master in Research and Innovation - UPC}
 	
 	In this project has been developed an Integer Linear Programming model in order to optimize the routes for a fleet of vehicles with temporal constraints derived from the distance between locations and from the tasks that has to be done for every location. Also have been developed different meta-heuristic strategies in order to get results more efficiently in terms of exeuction time even if there are not the optimal but close enough. Finnaly comparissons in term of execution time and solution quality have been done. 
 	
-\section{Structure of the document}
+\section{Document structure}
 	The structure of this document is the following: The problem definition is done in chapter \ref{ch:problem_definition}. Here it is explained the problem that is faced, which constraints is needed to take into account and what we want to optimize. At chapter \ref{ch:ilp_model} is explained the mathematical model that has been developed, i.e. the decission variables and also the constraints with a mathematical nomenclature. After this chapter, at chapter \ref{ch:meta_heuristics} is explained how it has been used the heuristics approach in order to face with the problem, two meta-heuristics has been used: GRASP\footnote{Greedy Adaptative Search Procedure} and BRKGA\footnote{Biased Random-Key Genetic Algorithm}. After perform several executions for those approaches, a comparisson in terms of time and quality of the result is done at chapter \ref{ch:comparisson}. Finnally a discussion about the results obtained is done at chapter \ref{ch:discussion} and the conclusions of the project are explained at chapter \ref{ch:conclusions}
 \end{abstract}
 
@@ -50,61 +54,97 @@ Considering that the company has an unlimited number of vehicles, the goal of th
 
 \section{Formal definition}
 
-In this section is defined the input variables, decision variables, the constraints and also the objective of this optimization problem.
-According the definition above, this variables are provided and describes a single instance of this problem.
+In this section is defined how the problem will be managed, also the input variables, the constraints and the objective function. This is a formal definition, therefore is implementation independant. These definitions have been used both for ILP and for meta-heuristics.
+
+\subsection{A relaxed TSP with temporal constraints}\label{ss:relased_tsp}
+
+This problem has been formally defined as a relaxed TSP\footnote{Travel Salesman Problem} with temporal constraints. It is relaxed because allows more than one cycle, i.e. more than one travel salesman (vehicle), and it is with temporal constraints because in addition to the usual weighted edges (routes) in the original TSP, we have temporal windows and tasks times for every node (location). The key point is that all the cycles in the graph, i.e. all routes, \textbf{must imply the $l_{s}$}.
+
+This point of view allows to manage this problem without taking into account vehicles. The number of vehicles will be, in fact, the number of cycles in the solution.
+
+As in TSP we can represent the towns and routes as a directed weighted complete graph, then, we can describe a route of every vehicle by mean of a set of edges that describes a cycle. Remember that the cycle must implie the $l_{s}$ node.
+
+The definition of the graph is defined by the below expression. Is important to mention that the cardinal of the $A$ set is like that because the distance of the travel from location a to location b could be different than the travel from b to a because the roads or whatever else.
+$$G=(V,A) \quad where \quad \text{V: set of nodes, A: set of directed edges}$$
+$$|V|=n, \text{being n = number of locations} \quad |A|=n^{2}-n$$
+
+Now, let's define the set the whole possible cycles in the graph as $C$ where every cycle is defined as a subset of edges that fulfill all the conditions to be a cycle. Then, the set of all possible vehicles $VH \subset C$ are all the cycles that imples the $l_{s}$ as is described in the next expression:
+$$vh \in VH \Leftrightarrow \exists a \in vh \text{ s.t. } a_{source} = l_{s} \lor a_{destination} = l_{s}$$
+
+We can describe a set of potential solutions for the problem $PS \subset VH$ as all of subsets of $VH$ that cover all the locations without repeat any one of them. Those are potential solutions because for the moment we have not taked into account the temporal constraints. Finally, the set of feasible solutions will be $S \subseteq PS$. And the challenging point is to get the optimal solution from this set.
 
 \subsection{Input data}
 
-The following list describe all the input data that is provided.
+According the definition, this variables are provided and describes a single instance of this problem. The following list describe all the input data that is provided. In order to improve the understanding, the input data have been split into two subsets. By one hand all data related to the graph stuff, and by the other hand the input data related to temporal restrictions.
+
+\subsubsection{Graph input data}
+This input data is used in order to build up the graph that represents the problem and has been described several lines above. On next lines this input data is showed and explained.
+
 \begin{itemize}
-	\item Number of locations: Is the number of locations that the vehicles have visit.
+	\item \textbf{Number of locations} that the vehicles have visit. From here we can define the $V$ set that is the nodes set of the graph.
 	$$
 	n \in \mathbb{N}
 	$$ 
-	From here we can define the $L$ set that is the locations set.
-	\item Starting location: The location where all vehicles are placed at the beginning of times.
+	\item \textbf{Starting location} where all vehicles are placed at the beginning of times.
 	$$
 	l_{s} \in L
 	$$
-	\item Distances: Are the distances in minutes from one locations to the other. It is needed in order to know the time that a route spends. Note that when $a=b$, then $dist_{l_{a},l_{b}}=0$
+	\item \textbf{Distances} in minutes from one locations to the other. This data form the $A$ set because it is the weights for the edges for our completed directed and weighted graph. Note that when $a=b$, then $dist_{l_{a},l_{b}}=0$
 	$$
-	dist_{l_{a},l_{b}} \quad \forall l_{a},l_{b} \in L
+	dist_{l_{a},l_{b}} \in A \quad \forall l_{a},l_{b} \in V
 	$$
-	\item Lower boundary for the temporal windows for every location. It indicates from when a task can be executed. If one vehicles arrives before this time, it must wait. The temporal unit are the minutes. This minimum windows can be at most 720 that is the journey time in minutes ($8h*60min/h = 720min$)
+	Could be said that this is a temporal data but as this data is also needed to build up the graph, and is present on the original TSP as well, is prefered to be here.
+\end{itemize}
+
+\subsubsection{Time constraints input data}
+This input data is used in order to build up the time constraints needed for the problem definition. On next lines this input data is shoed and explained.
+
+\begin{itemize}	
+	\item \textbf{Lower boundary} for the temporal windows for every location. It indicates from when a task can be executed. If one vehicles arrives before this time, it must wait. The temporal unit are the minutes. This minimum windows can be at most 720 that is the journey time in minutes ($8h*60min/h = 720min$)
 	$$
 	min_{l} \in [0, 720] \quad \forall l \in L
 	$$
-	\item Upper boundary for the temporal windows for every location. It indicates until when a task can be executed. Take into account that does not have sense that $max_{l} < min_{l}$
+	\item \textbf{Upper boundary} for the temporal windows for every location. It indicates until when a task can be executed. Take into account that does not have sense that $max_{l} < min_{l}$
 	$$
 	max_{l} \in [min_{l}, 720] \quad \forall l \in L
 	$$
-	\item Time that a task spends for every location.
+	\item \textbf{Time} that a task spends for every location.
 	$$
 	task_{l} \in [0, 720], \forall l \in L
 	$$
 \end{itemize}
-	
-\subsection{Decission variables}
 
-We are facing this problem in order to optimize the solution. The solution consists on the description of the routes that the fleet of vehicles have to be done. On the next lines a relation of the required decission variables are explained.
+\subsection{Constratints definition}
 
+In this section are explained the fundamental constraints that are implementation independant. As well as with input data on the previous section, in order to improve the understanding, the constraints are splitted into two subsets, the graph constraint and the time constraints.
+
+\subsubsection{Graph constraints}
+
+These constraints are derived from the format description of the problem as a directed weighted graph. All the solutions that exists in set $VH$ (section \ref{ss:relased_tsp}) fullfil the graph constraints. Just for summing up, those constraints are
 \begin{itemize}
-	\item We can represent the towns and routes as a directed weighted complete graph, then, we can describe a route of every vehicle by mean of a set of edges that describes a cycle that imples the $l_{s}$ node. 
-	\begin{gather}
-	G=(V,A) \quad where \quad \text{V: set of nodes, A: set of directed edges} \\
-	|V|=n \\
-	cycle_{i} \subseteq A, \text{ s.t. } 1 \leq i \leq \text{Number of cycles} \\
-	cycle_{i} \cap cycle_{j} = \varnothing \text{ s.t. } i \neq j
-	\end{gather}
-	In equation 2.3 and 2.4 are defining this decission variable and will be constraints in the ILP model at \ref{ch:ilp_model} chapter. They are defining that our decission variable is a set of sets that are subsets of $A$, i.e. are sets of directed edges. The 2.4 equation is saying that we can not have two routes that have a common route.
-	
-	\item One of the most important decission variables is the numbers of vehicles needed. It will be equal as the number of cycles in the graph.
-	
-	\item From the company requirements we know that if there are two possible solutions, we have to take this one that returns before to the $l_{s}$. Then it is as well a decission variable and depends directly on the taked routes.
+	\item Every location has to be visited exactly one time. It means that all cycles in a solution must cover all nodes and can not share any node.
+	\item All cycles in a solution must involve the starting location.
 \end{itemize}
 
-The decission variables above are the basic ones. As you will see on chapter \ref{ch:ilp_model} more decissions variables are used for the ILP model in order to calcule good values for the times of the routes.
+\subsubsection{Time constraints}\label{ss:time_constraints}
+These constraints have to guarantee that the time restrictions are fullfiled. Those constraints are:
+\begin{itemize}
+	\item The arrival time to location $l$ must be less or equal $max_{l}$.
+	\item The arrival time to location $l$ must be $max(arrivalTime, min_{l})$. It means that if one vehicle arrive before  $min_{l}$ it will wait.
+	\item The total time of a cycle must be less than 720 minutes that is 8 hours.
+\end{itemize}
 
+Note that the arrival time to a location is the sumation of the previous location arrival time plus the task of the previous location plus the time spent in the path (the weight of the edge).
+
+\subsection{Objective function definition}
+
+In order to get the optimal solution we need to clasify every solution by a number that can tell us the quality of every one of them. This number is provided by the \textbf{objective function}.
+
+As the description of the problem said, we want to minimize the number of vehicles and when two solutions have the same number of vehicles, we want the solution that end the whole job before. We will need two variables for this purpose, by one hand, the number of vehicles, lets say $nVehicles$ and by the other hand the time when the last vehicle ends its job, lets say $lastArrival$. How to get the correct value for these two variable is implementation dependant and therefore will be explained on the next chapters.
+
+The objective functions is described as:
+$$ Minimize \quad nVehicles*M + lastArrival$$
+In this expression, the $M$ is a big enough number. It is needed in order to priorize the solutions with less value for $nVehicle$. When two solutions have the same number of vehicles, then the important value is the $lastArrival$.
 \chapter{ILP model}\label{ch:ilp_model}
 
 ILP\footnote{Integer Linear Programming} is the first of the two methods that has been used in this project. This method is always concerned on having the optimal solution without taking into account the amount of computational resources needed. This model is developed in CPLEX and the model implemented is described at the next sections.
@@ -114,15 +154,55 @@ ILP\footnote{Integer Linear Programming} is the first of the two methods that ha
 From chapter \ref{ch:problem_definition} we already know which is the data that is provided. Now we need them in an specific shape in order to deal with them in CPLEX.
 
 \begin{itemize}
-	\item Number of locations
-	%\begin{minted}{java}
-	%	dvar int nVehicles;
-	%\end{minted}
-	\item Taked routes by the vehicles. The subsets of directed edges described in the previous chapter is represented by a boolean matrix in CPLEX. The rows of the matrix are the source of the route and the columns are the target location. Therefore, if a cell is set to 1 means that this route has been taked.
-	%\begin{minted}
-	% dvar boolean tracked[n in N, n2 in N];
-	%\end{minted}
+	\item \textbf{Number of locations} $n$ is declared as an integer as well as \textbf{starting location}
+	\begin{minted}{python}
+		int nLocations=...;
+		int startLocation=...;
+	\end{minted}
+	\item The \textbf{distances} are modeled as two-dimensional matrix of integers that have $n^{2}$ positions. If you take into account that the values on the diagonal of the matrix will not be taked into account, the total number of distances is $n^{2}-n$ as we have described in the previous chapter.
+	\begin{minted}{python}
+		range N=1..nLocations;
+		int distances[n in N, n2 in N]=...;
+	\end{minted}
+	\item The remaining data fields are related to the locations, because that they are defined as a vector on $n$ positions. Those data fields are \textbf{lower boundary} and \textbf{upper boundary} of the temporal windows and the time spent in a \textbf{task}.
+	\begin{minted}{python}
+		int task[n in N]=...;
+		int minW[n in N]=...;
+		int maxW[n in N]=...;
+	\end{minted}
 \end{itemize}
+
+\section{Decission variables}
+
+The solution of the problem will be encoded in a certain way in a decission variable. The decission variables are not only used for get the final result but also for enforcing some situation with constraints. Those variables unlike input data ones, are not statics and can change their value in order to fulfil the constraints (section \ref{s:ilp_constraints}), as is just said, and in the same time in order to maximize or minimize the objective function (section \ref{s:ilp_objective_function}). Therefore, even if the important numbers for the solution are two. The number of used vehicles and the time when the last vehicle done the work is needed a sort of other decision variables. In the next list is presented a relation of the defined decision variable for this project.
+
+\begin{itemize}
+	\item The \textbf{tracked} variable. It is a $n \text{x} n$ matrix and keep information about whether a path from location $n$ to location $n2$ is taked, i.e. keep information about which edges are on the solution. It is needed in order to control the number of input and output edges for every location and for calculate the time spent in a route.
+	\begin{minted}{python}
+	dvar boolean tracked[n in N, n2 in N];
+	\end{minted}
+	
+	\item In order to build the temporal constraints that we have at section \ref{ss:time_constraints} we need information about when a vehicle arrives to a location. Because that the \textbf{arrivingTime} decision variable has been defined. It is an n-vector that keeps the arriving time for all locations (nodes).
+	\begin{minted}{python}
+	dvar int arrivingTime[n in N];
+	\end{minted}
+	
+	\item One of the most important decision variables is the numbers of vehicles needed. \textbf{nVehicles} keep the number of vehicles in the solution.
+	\begin{minted}{python}
+	dvar int nVehicles;
+	\end{minted}
+	
+	\item The other really important value for our result is the end time of the last vehicle. \textbf{lastDone} have the time in minutes of the last arrival vehicle.
+	\begin{minted}{python}
+	dvar int lastDone;
+	\end{minted}
+\end{itemize}
+
+\section{Objective function}\label{s:ilp_objective_function}
+
+\section{Constraints}\label{s:ilp_constraints}
+
+blah blah blah
 
 \chapter{Meta-heuristics}\label{ch:meta_heuristics}
 

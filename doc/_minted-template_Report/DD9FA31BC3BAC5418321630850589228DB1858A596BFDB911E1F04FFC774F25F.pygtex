@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+		\PYG{n+nb}{range} \PYG{n}{N}\PYG{o}{=}\PYG{l+m+mf}{1.}\PYG{o}{.}\PYG{n}{nLocations}\PYG{p}{;}
+		\PYG{n+nb}{int} \PYG{n}{distances}\PYG{p}{[}\PYG{n}{n} \PYG{o+ow}{in} \PYG{n}{N}\PYG{p}{,} \PYG{n}{n2} \PYG{o+ow}{in} \PYG{n}{N}\PYG{p}{]}\PYG{o}{=...}\PYG{p}{;}
+\end{Verbatim}

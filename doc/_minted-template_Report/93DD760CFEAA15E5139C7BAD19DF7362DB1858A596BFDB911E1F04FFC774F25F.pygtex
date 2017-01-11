@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+		\PYG{n+nb}{int} \PYG{n}{nLocations}\PYG{o}{=...}\PYG{p}{;}
+		\PYG{n+nb}{int} \PYG{n}{startLocation}\PYG{o}{=...}\PYG{p}{;}
+\end{Verbatim}
