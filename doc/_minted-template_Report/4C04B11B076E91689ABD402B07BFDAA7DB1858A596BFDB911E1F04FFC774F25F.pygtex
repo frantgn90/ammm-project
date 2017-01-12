@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nb}{int} \PYG{n}{distances}\PYG{p}{[}\PYG{n}{n} \PYG{o+ow}{in} \PYG{n}{N}\PYG{p}{,} \PYG{n}{n2} \PYG{o+ow}{in} \PYG{n}{N}\PYG{p}{]}\PYG{o}{=...}\PYG{p}{;}
+\end{Verbatim}

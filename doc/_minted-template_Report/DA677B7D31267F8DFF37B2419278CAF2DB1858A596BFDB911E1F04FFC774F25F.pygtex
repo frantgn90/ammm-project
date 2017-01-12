@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{forall}\PYG{p}{(}\PYG{n}{n} \PYG{o+ow}{in} \PYG{n}{N}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+	\PYG{n}{tracked}\PYG{p}{[}\PYG{n}{n}\PYG{p}{,}\PYG{n}{n}\PYG{p}{]} \PYG{o}{==} \PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

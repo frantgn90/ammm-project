@@ -1,22 +1,23 @@
-\contentsline {chapter}{\numberline {1}Introduction}{3}
-\contentsline {section}{\numberline {1.1}Document structure}{3}
-\contentsline {chapter}{\numberline {2}Problem definition}{1}
-\contentsline {section}{\numberline {2.1}Description}{1}
-\contentsline {section}{\numberline {2.2}Formal definition}{1}
-\contentsline {subsection}{\numberline {2.2.1}A relaxed TSP with temporal constraints}{1}
-\contentsline {subsection}{\numberline {2.2.2}Input data}{2}
-\contentsline {subsubsection}{Graph input data}{2}
-\contentsline {subsubsection}{Time constraints input data}{2}
-\contentsline {subsection}{\numberline {2.2.3}Constratints definition}{3}
-\contentsline {subsubsection}{Graph constraints}{3}
-\contentsline {subsubsection}{Time constraints}{3}
-\contentsline {subsection}{\numberline {2.2.4}Objective function definition}{3}
-\contentsline {chapter}{\numberline {3}ILP model}{4}
-\contentsline {section}{\numberline {3.1}Input data}{4}
-\contentsline {section}{\numberline {3.2}Decission variables}{4}
-\contentsline {section}{\numberline {3.3}Objective function}{5}
-\contentsline {section}{\numberline {3.4}Constraints}{5}
-\contentsline {chapter}{\numberline {4}Meta-heuristics}{6}
-\contentsline {chapter}{\numberline {5}Comparissons}{7}
-\contentsline {chapter}{\numberline {6}Discussion}{8}
-\contentsline {chapter}{\numberline {7}Conclusions}{9}
+\contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}
+\contentsline {section}{\numberline {1.1}Document structure}{3}{section.1.1}
+\contentsline {chapter}{\numberline {2}Problem definition}{1}{chapter.2}
+\contentsline {section}{\numberline {2.1}Description}{1}{section.2.1}
+\contentsline {section}{\numberline {2.2}Formal definition}{1}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}A relaxed TSP with temporal constraints}{1}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Input data}{2}{subsection.2.2.2}
+\contentsline {subsubsection}{Graph input data}{2}{section*.2}
+\contentsline {subsubsection}{Time constraints input data}{2}{section*.3}
+\contentsline {subsection}{\numberline {2.2.3}Constratints definition}{3}{subsection.2.2.3}
+\contentsline {subsubsection}{Graph constraints}{3}{section*.4}
+\contentsline {subsubsection}{Time constraints}{3}{section*.5}
+\contentsline {subsection}{\numberline {2.2.4}Objective function definition}{3}{subsection.2.2.4}
+\contentsline {chapter}{\numberline {3}ILP model}{4}{chapter.3}
+\contentsline {section}{\numberline {3.1}Input data}{4}{section.3.1}
+\contentsline {section}{\numberline {3.2}Decission variables}{4}{section.3.2}
+\contentsline {section}{\numberline {3.3}Constraints}{5}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Graph constraints}{5}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Time constraints}{6}{subsection.3.3.2}
+\contentsline {chapter}{\numberline {4}Meta-heuristics}{7}{chapter.4}
+\contentsline {chapter}{\numberline {5}Comparissons}{8}{chapter.5}
+\contentsline {chapter}{\numberline {6}Discussion}{9}{chapter.6}
+\contentsline {chapter}{\numberline {7}Conclusions}{10}{chapter.7}

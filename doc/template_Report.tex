@@ -7,6 +7,26 @@
 \usepackage{minted}
 
 \usepackage{xcolor}
+\usepackage{color}
+\usepackage{multicol}
+\usepackage{tasks}
+\usepackage{hyperref}
+\usepackage{mathtools}
+
+\setlength{\columnseprule}{0.2pt}
+
+\DeclareTemplateInterface{tasks}{default}{3}
+{
+	% option        : type      = default
+	enumerate       : boolean   = false    ,
+	label           : tokenlist           ,
+	indent          : length    = 2.5em   ,
+	counter-format  : tokenlist = tsk[a]) ,
+	label-format    : tokenlist           ,
+	label-width     : length    = 1em     ,
+	label-offset    : length    = .3333em ,
+	after-item-skip : skip      = 1ex plus 1ex minus 1ex
+}
 
 \usepackage[a4paper,left=2.9cm,right=2.9cm,top=3cm,bottom=2.5cm,headheight=110pt]{geometry}
 
@@ -77,17 +97,17 @@ We can describe a set of potential solutions for the problem $PS \subset VH$ as 
 
 According the definition, this variables are provided and describes a single instance of this problem. The following list describe all the input data that is provided. In order to improve the understanding, the input data have been split into two subsets. By one hand all data related to the graph stuff, and by the other hand the input data related to temporal restrictions.
 
-\subsubsection{Graph input data}
+\subsubsection{Graph input data}\label{sss:graph_constraints}
 This input data is used in order to build up the graph that represents the problem and has been described several lines above. On next lines this input data is showed and explained.
 
 \begin{itemize}
-	\item \textbf{Number of locations} that the vehicles have visit. From here we can define the $V$ set that is the nodes set of the graph.
+	\item \textbf{Number of locations} that the vehicles have visit. From here we can define the $V$ set that is the nodes set of the graph that are in fact the set of locations.
 	$$
 	n \in \mathbb{N}
 	$$ 
 	\item \textbf{Starting location} where all vehicles are placed at the beginning of times.
 	$$
-	l_{s} \in L
+	l_{s} \in V
 	$$
 	\item \textbf{Distances} in minutes from one locations to the other. This data form the $A$ set because it is the weights for the edges for our completed directed and weighted graph. Note that when $a=b$, then $dist_{l_{a},l_{b}}=0$
 	$$
@@ -102,19 +122,19 @@ This input data is used in order to build up the time constraints needed for the
 \begin{itemize}	
 	\item \textbf{Lower boundary} for the temporal windows for every location. It indicates from when a task can be executed. If one vehicles arrives before this time, it must wait. The temporal unit are the minutes. This minimum windows can be at most 720 that is the journey time in minutes ($8h*60min/h = 720min$)
 	$$
-	min_{l} \in [0, 720] \quad \forall l \in L
+	min_{l} \in [0, 720] \quad \forall l \in V
 	$$
 	\item \textbf{Upper boundary} for the temporal windows for every location. It indicates until when a task can be executed. Take into account that does not have sense that $max_{l} < min_{l}$
 	$$
-	max_{l} \in [min_{l}, 720] \quad \forall l \in L
+	max_{l} \in [min_{l}, 720] \quad \forall l \in V
 	$$
 	\item \textbf{Time} that a task spends for every location.
 	$$
-	task_{l} \in [0, 720], \forall l \in L
+	task_{l} \in [0, 720], \forall l \in V
 	$$
 \end{itemize}
 
-\subsection{Constratints definition}
+\subsection{Constratints definition}\label{ss:formal_constraints_definition}
 
 In this section are explained the fundamental constraints that are implementation independant. As well as with input data on the previous section, in order to improve the understanding, the constraints are splitted into two subsets, the graph constraint and the time constraints.
 
@@ -136,7 +156,7 @@ These constraints have to guarantee that the time restrictions are fullfiled. Th
 
 Note that the arrival time to a location is the sumation of the previous location arrival time plus the task of the previous location plus the time spent in the path (the weight of the edge).
 
-\subsection{Objective function definition}
+\subsection{Objective function definition}\label{ss:objective_function}
 
 In order to get the optimal solution we need to clasify every solution by a number that can tell us the quality of every one of them. This number is provided by the \textbf{objective function}.
 
@@ -145,6 +165,8 @@ As the description of the problem said, we want to minimize the number of vehicl
 The objective functions is described as:
 $$ Minimize \quad nVehicles*M + lastArrival$$
 In this expression, the $M$ is a big enough number. It is needed in order to priorize the solutions with less value for $nVehicle$. When two solutions have the same number of vehicles, then the important value is the $lastArrival$.
+
+
 \chapter{ILP model}\label{ch:ilp_model}
 
 ILP\footnote{Integer Linear Programming} is the first of the two methods that has been used in this project. This method is always concerned on having the optimal solution without taking into account the amount of computational resources needed. This model is developed in CPLEX and the model implemented is described at the next sections.
@@ -155,54 +177,130 @@ From chapter \ref{ch:problem_definition} we already know which is the data that 
 
 \begin{itemize}
 	\item \textbf{Number of locations} $n$ is declared as an integer as well as \textbf{starting location}
-	\begin{minted}{python}
-		int nLocations=...;
-		int startLocation=...;
-	\end{minted}
-	\item The \textbf{distances} are modeled as two-dimensional matrix of integers that have $n^{2}$ positions. If you take into account that the values on the diagonal of the matrix will not be taked into account, the total number of distances is $n^{2}-n$ as we have described in the previous chapter.
-	\begin{minted}{python}
-		range N=1..nLocations;
-		int distances[n in N, n2 in N]=...;
-	\end{minted}
-	\item The remaining data fields are related to the locations, because that they are defined as a vector on $n$ positions. Those data fields are \textbf{lower boundary} and \textbf{upper boundary} of the temporal windows and the time spent in a \textbf{task}.
-	\begin{minted}{python}
-		int task[n in N]=...;
-		int minW[n in N]=...;
-		int maxW[n in N]=...;
-	\end{minted}
+	\begin{tasks}[](2)
+		\task[] $n \in \mathbb{N}$		
+		\task[] \mintinline{python} |int nLocations=...;|
+		\task[] $l_{s} \in \mathbb{N} \text{ s.t. } 1 \leq l_{s} \leq n$		
+		\task[] \mintinline{python} |int startLocation=...;|
+	\end{tasks}
+	\item The \textbf{distances} are modeled as two-dimensional matrix of integers that have $n^{2}$ positions. If you take into account that the values on the diagonal of the matrix will not be taked into account, the total number of distances is $n^{2}-n$ as we have described in the previous chapter. The distance is expressed in minutes.
+	\begin{tasks}[](2)
+		\task[] $dist_{a,b} \in \mathbb{N} \quad \forall a,b \in [0, n) \text{ s.t. } a \neq b$		
+		\task[] \mintinline{python} |range N=1..nLocations;|
+		\task[] 
+		\task[] \mintinline{python} |int distances[n in N, n2 in N]=...;|
+	\end{tasks}
+	\item The remaining data fields are related to the locations, because that they are defined as a vector on $n$ positions. Those data fields are \textbf{lower boundary} and \textbf{upper boundary} of the temporal windows and the time spent in a \textbf{task}. All of them are expressed in minutes.
+	\begin{tasks}[](2)
+		\task[] $task_{i}  \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$
+		\task[] \mintinline{python} |int task[n in N]=...;|
+		\task[] $minw_{i}  \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$
+		\task[] \mintinline{python} |int minW[n in N]=...;|
+		\task[] $maxw_{i}  \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$
+		\task[] \mintinline{python} |int maxW[n in N]=...;|
+	\end{tasks}
 \end{itemize}
 
 \section{Decission variables}
 
-The solution of the problem will be encoded in a certain way in a decission variable. The decission variables are not only used for get the final result but also for enforcing some situation with constraints. Those variables unlike input data ones, are not statics and can change their value in order to fulfil the constraints (section \ref{s:ilp_constraints}), as is just said, and in the same time in order to maximize or minimize the objective function (section \ref{s:ilp_objective_function}). Therefore, even if the important numbers for the solution are two. The number of used vehicles and the time when the last vehicle done the work is needed a sort of other decision variables. In the next list is presented a relation of the defined decision variable for this project.
+The solution of the problem will be encoded in a certain way in a decission variable. The decission variables are not only used for get the final result but also for enforcing some situation with constraints. Those variables unlike input data ones, are not statics and can change their value in order to fulfil the constraints (section \ref{s:ilp_constraints}), as is just said, and in the same time in order to maximize or minimize the objective function (section \ref{ss:objective_function}). Therefore, even if the important numbers for the solution are two. The number of used vehicles and the time when the last vehicle done the work is needed a sort of other decision variables. In the next list is presented a relation of the defined decision variable for model.
 
 \begin{itemize}
-	\item The \textbf{tracked} variable. It is a $n \text{x} n$ matrix and keep information about whether a path from location $n$ to location $n2$ is taked, i.e. keep information about which edges are on the solution. It is needed in order to control the number of input and output edges for every location and for calculate the time spent in a route.
-	\begin{minted}{python}
-	dvar boolean tracked[n in N, n2 in N];
-	\end{minted}
+	\item The \textbf{tracked} variable. It is a $n \text{x} n$ matrix and keep information about whether a path from location $n$ to location $n2$ is taked, i.e. keep information about which edges are on the solution. It is needed in order to control the number of input and output edges for every location, i.e. to control the correctness of the cycles and for calculate the time spent in a route by determining which paths have been taken and which ones not.
+	\begin{tasks}[](2)
+		\task[] $tracked_{a,b} \in \mathbb{B} \quad \forall a,b \in [0, n) \text{ s.t. } a \neq b$
+		\task[] \mintinline{python} |dvar bool tracked[n in N, n2 in N];|
+	\end{tasks}
 	
-	\item In order to build the temporal constraints that we have at section \ref{ss:time_constraints} we need information about when a vehicle arrives to a location. Because that the \textbf{arrivingTime} decision variable has been defined. It is an n-vector that keeps the arriving time for all locations (nodes).
-	\begin{minted}{python}
-	dvar int arrivingTime[n in N];
-	\end{minted}
+	\item In order to build the temporal constraints that we have at section \ref{ss:time_constraints} we need information about when a vehicle arrives to a location. Because that the \textbf{arrivingTime} decision variable has been defined. It is an n-vector that keeps the arriving time for all locations (nodes) in minutes.
+	\begin{tasks}[](2)
+		\task[] $arriving_{i} \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$
+		\task[] \mintinline{python} |dvar int arrivingTime[n in N];|
+	\end{tasks}
+	The starting location will not have arriving time, i.e. it will be always 0. The reasons are explained at section \ref{s:ilp_constraints}.
 	
 	\item One of the most important decision variables is the numbers of vehicles needed. \textbf{nVehicles} keep the number of vehicles in the solution.
-	\begin{minted}{python}
-	dvar int nVehicles;
-	\end{minted}
+	\begin{tasks}[](2)
+		\task[] $nVehicles \in \mathbb{N} \text{ s.t. } 1 \leq nVehicles \leq n$
+		\task[] \mintinline{python} |dvar int nVehicles;|
+	\end{tasks}
+	On the best case, we only will need one vehicle but in the worst one we will need as much vehicles as locations.
 	
 	\item The other really important value for our result is the end time of the last vehicle. \textbf{lastDone} have the time in minutes of the last arrival vehicle.
-	\begin{minted}{python}
-	dvar int lastDone;
-	\end{minted}
+	\begin{tasks}[](2)
+		\task[] $lastDone \in \mathbb{N}$
+		\task[] \mintinline{python} |dvar int lastDone;|
+	\end{tasks}
 \end{itemize}
 
-\section{Objective function}\label{s:ilp_objective_function}
+%\section{Objective function}\label{s:ilp_objective_function}
 
 \section{Constraints}\label{s:ilp_constraints}
 
-blah blah blah
+For an ILP model the constraints part is the most important part, or at least the most tricky part. They are defining the solution space and because that we need to be careful in order to try to limit as much as possible but without prune some solutions and forbidding CPLEX to find a feasible solution when it exists.
+
+The constraints below, as in section \ref{ss:formal_constraints_definition} have been separated into two sets. By one hand, the graph constraints and by the other hand, the time constraints.
+
+\subsection{Graph constraints}
+
+This constraints are the ILP version of the constraints defined at section \ref{sss:graph_constraints}.
+
+\begin{itemize}
+	\item The first constraint is worried about the fact that every location has to be visited exactly one time. For this purpose the \textit{tracked} decision variable is used. There is one special case where the number of visits for a location must be one or more. This special case will be the starting location because we want that all cycles involve it, therefore it will be visited at least one time.
+	\begin{multicols}{2}
+		$$\sum\limits_{j \in V} tracked_{i,j} = 1 \quad \forall i \in V \text{ s.t. } i,j \neq l_{s}$$
+		$$\sum\limits_{i \in V} tracked_{i,l_{s}} \geq 1 \quad \text{ s.t. } i \neq l_{s}$$
+		\vfill
+		\columnbreak
+		\begin{minted}[breaklines=true,linenos=false]{python}
+forall (n1 in N) {
+	if (n1 == startLocation) sum(n2 in N) tracked[n1, n2] >=1;		
+	else sum(n2 in N) tracked[n1, n2] == 1;		
+}
+		\end{minted}
+	\end{multicols}
+	
+	
+	The key point in this constraint is that we are counting the ingoing edges for all locations. 
+	
+	% TODO: Mirar si es posible simplificar esta constraint para que solo se garantice
+	% TODO: que el numero de ingoing edges y outgoing edges sea igual en la starting location
+	
+	\item From the previous constraint, we can ensure that every location just will have one ingoing edges but we are not ensuring anything about the outgoing edges. For cycles we want to ensure that there is only one outgoing edge for all location except for the starting one, that must be same outgoing edges as ingoing ones. Then, the sumation of outgoing edges must be equal as the ingoing edges for all locations.
+	\begin{multicols}{2}
+	$$\sum\limits_{j \in V} tracked_{i,j} = \sum\limits_{k \in V} tracked_{k,i} \quad \forall i \in V $$
+	$$ $$
+	\vfill
+	\columnbreak
+	\begin{minted}[breaklines=true,linenos=false]{python}
+forall (n in N) {
+	sum(n2 in N) tracked[n, n2] == sum(n3 in N) tracked[n3, n];	
+}
+	\end{minted}
+	\end{multicols}
+
+	% TODO: Mirar si esta constraint se podria quitar. El hecho de que todos los ciclos
+	% TODO: tengan que implicar la startlocation deberia ser suficiente
+	
+	\item One desirable constraint is that we want to avoid the cycles that just imply one location. The point for this constraint is that we are enforcing 0 on the diagonal of the tracked matrix. 
+	\begin{multicols}{2}
+	$$ \sum\limits_{i \in V} tracked_{i,i} = 0 $$
+	$$ $$
+	\vfill
+	\columnbreak
+	\begin{minted}[breaklines=true,linenos=false]{python}
+forall(n in N) {
+	tracked[n,n] == 0;	
+}
+	\end{minted}
+\end{multicols}
+\end{itemize}
+
+The constraints above are ensuring that our solution will contain cycles, and those cycles will visit all locations. Also is ensuring that all cycles are independant betweem them. The important thing that those constraints are not ensuring is that all cycles implies the starting location. This requirement will be fulfilled by time constraints as you will see on the next section.
+
+\subsection{Time constraints}
+
+Hola manola
 
 \chapter{Meta-heuristics}\label{ch:meta_heuristics}
 
