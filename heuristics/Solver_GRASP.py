@@ -108,6 +108,7 @@ class Solver_GRASP(object):
         
         cs = []
         # Get all candidate paths filtered by time
+        # TODO: Look for add task and distance to travel_time 
         for p in paths:
             if p.getDestination().getmaxW() >= travel_time:
                 cs.append(p)

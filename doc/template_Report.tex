@@ -14,6 +14,10 @@
 \usepackage{mathtools}
 
 \usepackage[cc]{titlepic}
+\usepackage{pseudocode}
+
+%Options: Sonny, Lenny, Glenn, Conny, Rejne, Bjarne, Bjornstrup
+\usepackage[Rejne]{fncychap}
 
 \setlength{\columnseprule}{0.2pt}
 
@@ -309,6 +313,95 @@ Imagine a situation in which one we have two locations in a cycle and no one of 
 By enforcing the arriving time to $0$ at starting location we are providing an exit point where all locations can go. Therefore, no cycle w/o starting location will form part of a valid solution, i.e. All the cycles of a valid solution will imply the starting location.
 
 \chapter{Meta-heuristics}\label{ch:meta_heuristics}
+
+In this chapter are explained via pseudocode the two meta-heuristics used for solve the problem. Only the most important parts will be shown, ignoring the rest of the code.
+
+For GRASP the constructive phase and local search algorithms will be explained and for BRKGA, the chromosome structure and the decoder.
+
+Just mention that the shape of the results for the meta-heuristics are the same as for ILP, that is the shape that has been described at section \ref{ss:relased_tsp}. It is a set of cycles, i.e. a set of paths
+
+\section{GRASP implementation}
+
+This meta-heuristic has a constructive phase that is concerned to build up a feasible solution. This phase is not deterministic because the randomization done on the candidate pick process. It means that for every execution, different solution could be emerge\footnote{For $\alpha \neq 1$}. This part is based on a randomized greedy algorithm, so a greedy function is also needed.
+
+You can see the constructive phase into two pseudo-codes. The constructive phase itself is at psheudcode \ref{pc:constructive_phase}. But in order to understand better what the developed heuristic is doing, you can see how the candidates set is generated at pseudocode \ref{pc:construct_cl}.
+
+The other part that will be shown is about the local search. Once the constructive phase ends up with a solution, eventually it is the optimal, but usually it is not. In order to improve the solution a neighbourhoods of the constructive phase solution, i.e. near solutions will be searched. This phase is called local search. Two neighbourhoods have been developed. The exchange and the reassignement. You can see the first one at pseudocode \ref{pc:exchange_neighbourhood} and the second one pseudocode \ref{pc:reassignement_neighbourhood}.
+
+Finally, an important function for this meta-heuristic is the greedy function. This greedy function is giving us information about the quality of a candidate in order to decide if this candidate should be part of the solution or not. In this case, the greedy value depends on the characteristics of the path\footnote{The candidates are not locations but paths}, the characteristics of the locations that this path connects and also on the progression of the travel, i.e. on the travel time. 
+
+$$ q(c, TravelTime) = TravelTime - distance(c) - minw(destination(c)) + task(source(c))$$
+
+This greedy function is trying to give more importance to those candidates that implies less waiting time, i.e. it is trying to maximize the efficiency of the solution.
+
+\subsection{Constructive phase pseudo-code}
+\begin{pseudocode}{grasp constructive phase}{\alpha, Paths, Locations}
+\label{pc:constructive_phase}
+	S \GETS \varnothing\\
+	LastLocation \GETS l_{s}\\
+	VisitedLocations \GETS \varnothing\\
+	\\
+	\WHILE \NOT size(VisitedLocations)=n-1 \DO
+	\BEGIN
+		TravelTime \GETS tavelTime(S)\\
+		\COMMENT{The candidates are not locations but paths}\\
+		C \GETS ConstructCL(LastLocation, TravelTime, VisitedLocations)\\
+		\IF size(C) = 0 \THEN
+			\RETURN{infeasible}\\
+		
+		\\
+		q_{min} \GETS min(q(c) \quad \forall c \in C)\\
+		q_{max} \GETS max(q(c) \quad \forall c \in C)\\
+		RCL \GETS {c \in C \text{ s.t. } q(c) \leq q_{min} + \alpha * (q_{max} - q_{min}) }\\
+		\text{select } c \in RCL \text{ at random }\\
+		\\
+		S = S \cup {c}\\
+		\IF destination(c) \neq l_{s} \THEN
+			VisitedLocations = VisitedLocations \cup destination(c)\\
+		LastLocation \GETS destination(c)\\
+	\END\\
+	\\
+	\COMMENT{The return path to the start location for the last vehicle must be added.}\\
+	ReturnPath \GETS getPath(destination(c), l_{s})\\
+	S = S \cup ReturnPath\\
+	
+	\RETURN S
+
+\end{pseudocode}
+
+\begin{pseudocode}{ConstructCL}{FromLocation, TravelTime, VisitedLocations}
+\label{pc:construct_cl}
+	C \GETS \varnothing\\
+	paths \GETS pathsFrom(FromLocation)\\
+	\COMMENT{Filter unattainable locations}\\
+	\FOREACH c \in paths \DO
+		\IF maxw(destination(c)) \geq TravelTime \THEN
+			C = C \cup c\\	
+	\COMMENT{Filter visited locations}\\
+	\FOREACH c \in C \DO
+		\IF destination(c) \in VisitedLocations \THEN
+			C = C - c\\
+	\COMMENT{Filter those locations that if go there is not possible to return to $l_{s}$}\\
+	\FOREACH c \in C \DO
+	\BEGIN
+		path_{1} \GETS getPath(FromLocation, destination(c))\\
+		path_{2} \GETS getPath(destination(c), l_{s})\\
+		time_{path_{1}} = max(TravelTime, minw(FromLocation)) + task(FromLocation) + distance(path_{1})\\
+		time_{path_{2}} = max(time_{path_{1}}, minw(destination(c))) + task(destination(c)) + distance(path_{2})\\
+		\IF time_{path_{2}} > 720 \THEN
+			C = C - c\\
+	\END\\
+	\\
+	\RETURN{\text{sorted } C \text{ by q(c)}}
+\end{pseudocode}
+
+\begin{pseudocode}{ExploreExchangeNeighbourhood}{S}
+	\label{pc:exchange_neighbourhood}
+\end{pseudocode}
+
+\begin{pseudocode}{ExploreReassignementNeighbourhood}{S}
+\label{pc:reassignement_neighbourhood}
+\end{pseudocode}
 
 \chapter{Comparissons}\label{ch:comparisson}
 
