@@ -85,7 +85,7 @@ This problem has been formally defined as a relaxed TSP\footnote{Travel Salesman
 
 This point of view allows to manage this problem without taking into account vehicles. The number of vehicles will be, in fact, the number of cycles in the solution.
 
-As in TSP we can represent the towns and routes as a directed weighted complete graph, then, we can describe a route of every vehicle by mean of a set of edges that describes a cycle. Remember that the cycle must implie the $l_{s}$ node.
+As in TSP we can represent the towns and all routes as a directed weighted complete graph, then, we can describe a route of every vehicle by mean of a set of edges that describes a cycle. Remember that the cycle must implie the $l_{s}$ node.
 
 The definition of the graph is defined by the below expression. Is important to mention that the cardinal of the $A$ set is like that because the distance of the travel from location a to location b could be different than the travel from b to a because the roads or whatever else.
 $$G=(V,A) \quad where \quad \text{V: set of nodes, A: set of directed edges}$$
@@ -94,7 +94,7 @@ $$|V|=n, \text{being n = number of locations} \quad |A|=n^{2}-n$$
 Now, let's define the set the whole possible cycles in the graph as $C$ where every cycle is defined as a subset of edges that fulfill all the conditions to be a cycle. Then, the set of all possible vehicles $VH \subset C$ are all the cycles that imples the $l_{s}$ as is described in the next expression:
 $$vh \in VH \Leftrightarrow \exists a \in vh \text{ s.t. } a_{source} = l_{s} \lor a_{destination} = l_{s}$$
 
-We can describe a set of potential solutions for the problem $PS \subset VH$ as all of subsets of $VH$ that cover all the locations without repeat any one of them. Those are potential solutions because for the moment we have not taked into account the temporal constraints. Finally, the set of feasible solutions will be $S \subseteq PS$. And the challenging point is to get the optimal solution from this set.
+We can describe a set of potential solutions for the problem $PS \subset VH$ as all of subsets of $VH$ that cover all the locations without repeat any one of them. Those are potential solutions because for the moment we have not token into account the temporal constraints. Finally, the set of feasible solutions will be $S \subseteq PS$. And the challenging point is to get the optimal solution from this set.
 
 \subsection{Input data}
 
@@ -137,7 +137,7 @@ This input data is used in order to build up the time constraints needed for the
 	$$
 \end{itemize}
 
-\subsection{Constratints definition}\label{ss:formal_constraints_definition}
+\subsection{Constraints definition}\label{ss:formal_constraints_definition}
 
 In this section are explained the fundamental constraints that are implementation independant. As well as with input data on the previous section, in order to improve the understanding, the constraints are splitted into two subsets, the graph constraint and the time constraints.
 
@@ -180,60 +180,46 @@ From chapter \ref{ch:problem_definition} we already know which is the data that 
 
 \begin{itemize}
 	\item \textbf{Number of locations} $n$ is declared as an integer as well as \textbf{starting location}
-	\begin{tasks}[](2)
-		\task[] $n \in \mathbb{N}$		
-		\task[] \mintinline{python} |int nLocations=...;|
-		\task[] $l_{s} \in \mathbb{N} \text{ s.t. } 1 \leq l_{s} \leq n$		
-		\task[] \mintinline{python} |int startLocation=...;|
-	\end{tasks}
+	
+	$$n \in \mathbb{N}$$			
+	$$l_{s} \in \mathbb{N} \text{ s.t. } 1 \leq l_{s} \leq n$$
+	
 	\item The \textbf{distances} are modeled as two-dimensional matrix of integers that have $n^{2}$ positions. If you take into account that the values on the diagonal of the matrix will not be taked into account, the total number of distances is $n^{2}-n$ as we have described in the previous chapter. The distance is expressed in minutes.
-	\begin{tasks}[](2)
-		\task[] $dist_{a,b} \in \mathbb{N} \quad \forall a,b \in [0, n) \text{ s.t. } a \neq b$		
-		\task[] \mintinline{python} |range N=1..nLocations;|
-		\task[] 
-		\task[] \mintinline{python} |int distances[n in N, n2 in N]=...;|
-	\end{tasks}
+
+	$$dist_{a,b} \in \mathbb{N} \quad \forall a,b \in [0, n) \text{ s.t. } a \neq b$$
+	
 	\item The remaining data fields are related to the locations, because that they are defined as a vector on $n$ positions. Those data fields are \textbf{lower boundary} and \textbf{upper boundary} of the temporal windows and the time spent in a \textbf{task}. All of them are expressed in minutes.
-	\begin{tasks}[](2)
-		\task[] $task_{i}  \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$
-		\task[] \mintinline{python} |int task[n in N]=...;|
-		\task[] $minw_{i}  \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$
-		\task[] \mintinline{python} |int minW[n in N]=...;|
-		\task[] $maxw_{i}  \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$
-		\task[] \mintinline{python} |int maxW[n in N]=...;|
-	\end{tasks}
+
+	$$task_{i}  \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$$
+	$$minw_{i}  \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$$
+	$$maxw_{i}  \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$$
 \end{itemize}
 
-\section{Decission variables}
+\section{Decision variables}\label{s:decision_variable}
 
 The solution of the problem will be encoded in a certain way in a decission variable. The decission variables are not only used for get the final result but also for enforcing some situation with constraints. Those variables unlike input data ones, are not statics and can change their value in order to fulfil the constraints (section \ref{s:ilp_constraints}), as is just said, and in the same time in order to maximize or minimize the objective function (section \ref{ss:objective_function}). Therefore, even if the important numbers for the solution are two. The number of used vehicles and the time when the last vehicle done the work is needed a sort of other decision variables. In the next list is presented a relation of the defined decision variable for model.
 
 \begin{itemize}
-	\item The \textbf{tracked} variable. It is a $n \text{x} n$ matrix and keep information about whether a path from location $n$ to location $n2$ is taked, i.e. keep information about which edges are on the solution. It is needed in order to control the number of input and output edges for every location, i.e. to control the correctness of the cycles and for calculate the time spent in a route by determining which paths have been taken and which ones not.
-	\begin{tasks}[](2)
-		\task[] $tracked_{a,b} \in \mathbb{B} \quad \forall a,b \in [0, n) \text{ s.t. } a \neq b$
-		\task[] \mintinline{python} |dvar bool tracked[n in N, n2 in N];|
-	\end{tasks}
+	\item The \textbf{tracked} variable. It is a $n \text{x} n$ matrix and keep information about whether a path from location $n$ to location $n2$ is taken, i.e. keep information about which edges are on the solution. It is needed in order to control the number of input and output edges for every location, i.e. to control the correctness of the cycles and for calculate the time spent in a route by determining which paths have been taken and which ones not.
+	
+	$$tracked_{a,b} \in \mathbb{B} \quad \forall a,b \in [0, n) \text{ s.t. } a \neq b$$
 	
 	\item In order to build the temporal constraints that we have at section \ref{ss:time_constraints} we need information about when a vehicle arrives to a location. Because that the \textbf{arrivingTime} decision variable has been defined. It is an n-vector that keeps the arriving time for all locations (nodes) in minutes.
-	\begin{tasks}[](2)
-		\task[] $arriving_{i} \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$
-		\task[] \mintinline{python} |dvar int arrivingTime[n in N];|
-	\end{tasks}
+	
+	$$arriving_{i} \in \mathbb{N} \quad \forall i \in [0, n) \text{ s.t. } i \neq l_{s}$$
+
 	The starting location will not have arriving time, i.e. it will be always 0. The reasons are explained at section \ref{s:ilp_constraints}.
 	
 	\item One of the most important decision variables is the numbers of vehicles needed. \textbf{nVehicles} keep the number of vehicles in the solution.
-	\begin{tasks}[](2)
-		\task[] $nVehicles \in \mathbb{N} \text{ s.t. } 1 \leq nVehicles \leq n$
-		\task[] \mintinline{python} |dvar int nVehicles;|
-	\end{tasks}
+
+	$$nVehicles \in \mathbb{N} \text{ s.t. } 1 \leq nVehicles \leq n$$
+	
 	On the best case, we only will need one vehicle but in the worst one we will need as much vehicles as locations.
 	
 	\item The other really important value for our result is the end time of the last vehicle. \textbf{lastDone} have the time in minutes of the last arrival vehicle.
-	\begin{tasks}[](2)
-		\task[] $lastDone \in \mathbb{N}$
-		\task[] \mintinline{python} |dvar int lastDone;|
-	\end{tasks}
+	
+	$$lastDone \in \mathbb{N}$$
+	
 \end{itemize}
 
 %\section{Objective function}\label{s:ilp_objective_function}
@@ -250,19 +236,9 @@ This constraints are the ILP version of the constraints defined at section \ref{
 
 \begin{itemize}
 	\item The first constraint is worried about the fact that every location has to be visited exactly one time. For this purpose the \textit{tracked} decision variable is used. There is one special case where the number of visits for a location must be one or more. This special case will be the starting location because we want that all cycles involve it, therefore it will be visited at least one time.
-	\begin{multicols}{2}
-		$$\sum\limits_{j \in V} tracked_{i,j} = 1 \quad \forall i \in V \text{ s.t. } i,j \neq l_{s}$$
-		$$\sum\limits_{i \in V} tracked_{i,l_{s}} \geq 1 \quad \text{ s.t. } i \neq l_{s}$$
-		\vfill
-		\columnbreak
-		\begin{minted}[breaklines=true,linenos=false]{python}
-forall (n1 in N) {
-	if (n1 == startLocation) sum(n2 in N) tracked[n1, n2] >=1;		
-	else sum(n2 in N) tracked[n1, n2] == 1;		
-}
-		\end{minted}
-	\end{multicols}
-	
+
+	$$\sum\limits_{j \in V} tracked_{i,j} = 1 \quad \forall i \in V \text{ s.t. } i,j \neq l_{s}$$
+	$$\sum\limits_{i \in V} tracked_{i,l_{s}} \geq 1 \quad \text{ s.t. } i \neq l_{s}$$
 	
 	The key point in this constraint is that we are counting the ingoing edges for all locations. 
 	
@@ -270,33 +246,17 @@ forall (n1 in N) {
 	% TODO: que el numero de ingoing edges y outgoing edges sea igual en la starting location
 	
 	\item From the previous constraint, we can ensure that every location just will have one ingoing edges but we are not ensuring anything about the outgoing edges. For cycles we want to ensure that there is only one outgoing edge for all location except for the starting one, that must be same outgoing edges as ingoing ones. Then, the sumation of outgoing edges must be equal as the ingoing edges for all locations.
-	\begin{multicols}{2}
 	$$\sum\limits_{j \in V} tracked_{i,j} = \sum\limits_{k \in V} tracked_{k,i} \quad \forall i \in V $$
 	$$ $$
-	\vfill
-	\columnbreak
-	\begin{minted}[breaklines=true,linenos=false]{python}
-forall (n in N) {
-	sum(n2 in N) tracked[n, n2] == sum(n3 in N) tracked[n3, n];	
-}
-	\end{minted}
-	\end{multicols}
 
 	% TODO: Mirar si esta constraint se podria quitar. El hecho de que todos los ciclos
 	% TODO: tengan que implicar la startlocation deberia ser suficiente
 	
 	\item One desirable constraint is that we want to avoid the cycles that just imply one location. The point for this constraint is that we are enforcing 0 on the diagonal of the tracked matrix. 
-	\begin{multicols}{2}
+
 	$$ \sum\limits_{i \in V} tracked_{i,i} = 0 $$
 	$$ $$
-	\vfill
-	\columnbreak
-	\begin{minted}[breaklines=true,linenos=false]{python}
-forall(n in N) {
-	tracked[n,n] == 0;	
-}
-	\end{minted}
-\end{multicols}
+
 \end{itemize}
 
 The constraints above are ensuring that our solution will contain cycles, and those cycles will visit all locations. Also is ensuring that all cycles are independant betweem them. The important thing that those constraints are not ensuring is that all cycles implies the starting location. This requirement will be fulfilled by time constraints as you will see on the next section.
@@ -305,7 +265,48 @@ The constraints above are ensuring that our solution will contain cycles, and th
 
 This is the ILP implementation for the constraints defined at section \ref{ss:time_constraints}. As you will see below, this constraints are not enough, so some other have to be defined.
 
+\begin{itemize}
+	\item As we have seen at section \ref{s:decision_variable} just with the obvious decision variables is not enough in order to maintain all the constraints of times fulfilled. Because that {\tt arrivingTime} decision variable is needed. Since we have this variable is needed to constraint it, otherwise it will take whatever value. At every position of this vector we want to have the arriving time for the location with a determined id. If we think a little bit, there is one location that we already know its arriving time, this is the start location, and its arriving time should be zero and this constraint is enforcing this. This constraint is more important that it seems in principle. The implications are explained at section \ref{ss:arriving_time_0_implications}.
+	
+	$$ arriving_{l_{s}} = 0 $$
 
+	\item Continuing with the arriving time, we also want good values for the rest of locations. In this constraint the arriving time for every locations is computed as the arriving time of the previous location plus the task done in that location plus the distance in minutes of the path that connects this pair of locations. Then, we must use the distances input data and also the decision variable {\tt tracked} in order to know which is previous location of the one that we are restricting.
+	
+	$$ \sum\limits_{i \in V} arriving_{j} \geq (arriving_i + task_i + distance_{i, j}) - (M*(1-tracked_{i, j})) \quad \forall j \in A \text{ s.t. } j \neq l_{s}$$
+		
+	For this equation, $i$ means the source location and $j$ means the destination. Take into account that we are avoiding the constraints for the $l_{s}$ because we are already restricting it to $0$ with the constraint above.
+	The key point is that when the path from $i$ to $j$ is done (tracked is True) then we have a strong constraint\footnote{The constraint is great or equal because the arriving time could be greater than that if the vehicle must wait because the $minw$.}. By the other hand, if the path is not token then this is so soft constraint, in fact this is not restricting anything.
+	
+	\item This next constraint is concerned about the minimum windows arriving time. The point is that if the vehicle arrives before the minimum time, then it has to wait. The way to do so is restricting that the arriving time will be at least the minimum window. It is in fact a waiting.
+	
+	$$\sum\limits_{i \in V \text{ s.t. } i \neq l_{s}} arriving_{i} \geq minw_{i}$$
+	
+	\item And what about $maxw$? This constraints avoid those solutions that does not fulfil the window time requirements.
+	
+	$$\sum\limits_{i \in V \text{ s.t. } i \neq l_{s}} arriving_{i} \leq maxw_{i}$$
+	
+	\item Until here the model has been concerned about having good values for this, let's say, internal decision variable but what about the really important ones?. In this constraint we are ensuring a good value for the $nVehicles$ variable. In this model the number of vehicles are the number of cycles, so we just have to count how many cycles we have. To do so, an easy way is just count how many ingoing or outgoing edges we have for the start locations.
+	
+	$$nVehicles = \sum\limits_{i \in V \text{ s.t. } i \neq l_{s}} tracked_{l_{s}, i}$$
+	
+	\item The last part of this model is to ensure that the whole work is done before the end of the working day. To do so we need to have a good value for the $lastDone$ variable. In this model $lastDone$ is calculated by getting the arriving time for all of the locations that have an outgoing edge to start location, for every one of them do the summation of the task and the distance to start location and then get the biggest value.
+	
+	$$ \sum\limits_{i \in V} lastDone \geq (arriving_i + task_i + distance_{i, l_{s}}) - (M*(1-tracked_{i, l_{s}}))$$
+	
+	\item To end with this section, the last constraint is forbidding the working days over the eight hours (720 minutes).
+	
+	$$ lastDone \leq 12*60$$
+
+
+\end{itemize}
+
+\subsection{Avoiding cycles w/o starting location for free}\label{ss:arriving_time_0_implications}
+
+At section \ref{ss:relased_tsp} has been explained how a vehicle is in fact a cycle. The important point is that all cycles represents all vehicles needed in our model and they must imply the start location. As you can see at section \ref{s:ilp_constraints} there is no explicit constraint that enforce this situation, so how it is actually  working?
+
+Imagine a situation in which one we have two locations in a cycle and no one of them are the starting. And now take into account the way this model is enforcing a good value for the arriving time for locations. Is not possible to have an arriving time in any of them because there is not a fixed value, so the arriving time for both of them will be undefined, in other words, is not a solution.
+
+By enforcing the arriving time to $0$ at starting location we are providing an exit point where all locations can go. Therefore, no cycle w/o starting location will form part of a valid solution, i.e. All the cycles of a valid solution will imply the starting location.
 
 \chapter{Meta-heuristics}\label{ch:meta_heuristics}
 
