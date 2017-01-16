@@ -334,7 +334,6 @@ $$ q(c, TravelTime) = TravelTime - distance(c) - minw(destination(c)) + task(sou
 
 This greedy function is trying to give more importance to those candidates that implies less waiting time, i.e. it is trying to maximize the efficiency of the solution.
 
-\subsection{Constructive phase pseudo-code}
 \begin{pseudocode}{grasp constructive phase}{\alpha, Paths, Locations}
 \label{pc:constructive_phase}
 	S \GETS \varnothing\\
@@ -402,6 +401,8 @@ This greedy function is trying to give more importance to those candidates that 
 \begin{pseudocode}{ExploreReassignementNeighbourhood}{S}
 \label{pc:reassignement_neighbourhood}
 \end{pseudocode}
+
+\section{BRKGA implementation}
 
 \chapter{Comparissons}\label{ch:comparisson}
 
