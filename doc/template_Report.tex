@@ -16,6 +16,8 @@
 \usepackage[cc]{titlepic}
 \usepackage{pseudocode}
 
+\usepackage{booktabs}
+
 %Options: Sonny, Lenny, Glenn, Conny, Rejne, Bjarne, Bjornstrup
 \usepackage[Rejne]{fncychap}
 
@@ -38,8 +40,11 @@
 
 % Title Page
 \title{{\Huge Route optimization for a fleet of vehicles with temporal constraints} \\
+\noindent\rule{4cm}{0.4pt}\\
 Algorithmics Methods and Mathematicals Models \\
-Master in Research and Innovation - UPC}
+Prof. Albert Oliveras LLunell and Prof. Lu\'is Velasco Esteban\\
+\noindent\rule{4cm}{0.4pt}\\
+Master in Research and Innovation}
 \author{Juan Francisco Mart\'inez Vera \\
 {\tt juan.francisco.martinez@est.fib.upc.edu}}
 \titlepic{\includegraphics[width=100px]{./imgs/upc_logo.jpg}}
@@ -321,13 +326,25 @@ For GRASP the constructive phase and local search algorithms will be explained a
 Just mention that the shape of the results for the meta-heuristics are the same as for ILP, that is the shape that has been described at section \ref{ss:relased_tsp}. It is a set of cycles, i.e. a set of paths
 
 \section{GRASP implementation}
-
+\subsection{Costructive phase}
 This meta-heuristic has a constructive phase that is concerned to build up a feasible solution. This phase is not deterministic because the randomization done on the candidate pick process. It means that for every execution, different solution could be emerge\footnote{For $\alpha \neq 1$}. This part is based on a randomized greedy algorithm, so a greedy function is also needed.
 
 You can see the constructive phase into two pseudo-codes. The constructive phase itself is at psheudcode \ref{pc:constructive_phase}. But in order to understand better what the developed heuristic is doing, you can see how the candidates set is generated at pseudocode \ref{pc:construct_cl}.
 
+The essential idea is that a vehicle is moving through locations one after the other until it can not go to the next one because the time restriction. In this case, it returns to the $l_{s}$. Notice that at candidate generation is checked if moving to this next location there is a possibility to return to $l_{s}$, if not it is not considered a candidate.
+
+\subsection{Local search}
 The other part that will be shown is about the local search. Once the constructive phase ends up with a solution, eventually it is the optimal, but usually it is not. In order to improve the solution a neighbourhoods of the constructive phase solution, i.e. near solutions will be searched. This phase is called local search. Two neighbourhoods have been developed. The exchange and the reassignement. You can see the first one at pseudocode \ref{pc:exchange_neighbourhood} and the second one pseudocode \ref{pc:reassignement_neighbourhood}.
 
+\subsubsection{Exchange neighbourhood}
+
+This neighborhood is formed by all near solutions from the solution done by the constructive phase that differenciates with it because there is one location for one vehicle that has been changed for other location of other vehicle. Notice that searching in this neighborhood will not bring us a better solution in terms of number of vehicles but just in terms of final arrival time.
+
+\subsubsection{Reassignement neighbourhood}
+
+In this case, the differences between the solution at constructive phase and the solution on this neighbourhood is that one of the locations of one vehicle is not visited by this one but by other one. Notice that in this neighborhood is possible that we can have both, a better solution in terms of number of vehicles and in terms of final arrival time.
+
+\subsection{Greedy function}
 Finally, an important function for this meta-heuristic is the greedy function. This greedy function is giving us information about the quality of a candidate in order to decide if this candidate should be part of the solution or not. In this case, the greedy value depends on the characteristics of the path\footnote{The candidates are not locations but paths}, the characteristics of the locations that this path connects and also on the progression of the travel, i.e. on the travel time. 
 
 $$ q(c, TravelTime) = TravelTime - distance(c) - minw(destination(c)) + task(source(c))$$
@@ -394,15 +411,121 @@ This greedy function is trying to give more importance to those candidates that 
 	\RETURN{\text{sorted } C \text{ by q(c)}}
 \end{pseudocode}
 
-\begin{pseudocode}{ExploreExchangeNeighbourhood}{S}
+\begin{pseudocode}{ExploreExchangeNeighbourhood}{S, strategy}
 	\label{pc:exchange_neighbourhood}
+	\COMMENT{The solution is a set of edges. This set of edges can be organized as cycles (vehicles)}\\
+	V \GETS vehicles(S)\\
+	\text{sort } V \text{ by } ArrivalTime \text{ desc}\\
+	\\
+	\COMMENT{Get the most loaded vehicle}\\
+	MLVehicle = V[0]\\
+	MLVehicleLocations \GETS locations(MLVehicle)\\
+	\text{sort } MLVehicleLocations \text{ by } task \text{ desc}\\
+	\\
+	\COMMENT{Now get the locations of the rest of vehicles sorted by task asc}\\
+	restOfLocations \GETS \varnothing\\
+	\FOREACH v \in vehicles(S) \DO
+		\IF v \neq MLVehicle \THEN
+			restOfLocations \GETS locations(v)\\
+	\text{sort } restOfLocations \text{ by } task \text{ desc}\\
+	\\
+	bestSolution \GETS S\\
+	\FOREACH highLoadedLoc \in MLVehicleLocations \DO
+	\BEGIN
+		\FOREACH lowLoadedLoc \in restOfLocations \DO
+		\BEGIN
+			neighboor \GETS generateExchangeS(highLoadedLoc, lowLoadedLoc)\\
+			\IF feasible(neighboor) \AND quality(neighboor) > quality(bestSolution) \THEN
+			\BEGIN
+				\IF strategy = \text{``FIRST-IMPROVEMENT"} \THEN
+					\RETURN{neighboor}
+				\ELSE
+					bestSolution \GETS neighboor\\
+			\END
+		\END
+	\END\\
+	\RETURN{bestSolution}
+	
+	
+	
+	
 \end{pseudocode}
 
-\begin{pseudocode}{ExploreReassignementNeighbourhood}{S}
+\begin{pseudocode}{ExploreReassignementNeighbourhood}{S, strategy}
 \label{pc:reassignement_neighbourhood}
+	\COMMENT{The solution is a set of edges. This set of edges can be organized as cycles (vehicles)}\\
+	V \GETS vehicles(S)\\
+	vehiclesByLoad \GETS \text{sort } V \text{ by } ArrivalTime \text{ asc}\\
+	vehiclesByLocation \GETS \text{sort } V \text{ by } nLocations \text{ asc}\\
+	\\
+	bestSolution \GETS S\\
+	\FOREACH lessnLocactionsVehicle \in vehiclesByLocation \DO
+	\BEGIN
+		\FOREACH path \in lessnLocationsVehicle \DO
+		\BEGIN
+			locationToReassign = source(path)\\
+			\IF locationToReassign \neq l_{s} \THEN
+			\BEGIN
+				\FOREACH lessLoadedVehicle \in vehiclesByLoad \DO
+					\IF lessLoadedVehicle \neq lessnLocationsVehicle \THEN
+					\BEGIN
+						\COMMENT{Try to inject the location to some place of vehicle route}\\
+						\FOREACH pathWhereInject \in lessLoadedVehicle \DO
+						\BEGIN
+							\COMMENT{If path is A-B and location is C, then try to A-C-B}\\
+							neighbor \GETS generateReassignementS(locationToReassign,\\
+							\quad \quad \quad \quad pathWhereInject)\\
+							\IF feasible(neighboor) \AND \\
+							\quad \quad \quad \quad quality(neighboor) > quality(bestSolution) \THEN
+							\BEGIN
+								\IF strategy = \text{``FIRST-IMPROVEMENT"} \THEN
+									\RETURN{neighboor}
+								\ELSE
+									bestSolution \GETS neighboor\\
+							\END
+						\END
+					\END
+			\END
+		\END
+	\END
 \end{pseudocode}
 
 \section{BRKGA implementation}
+
+\subsection{Chromosome structure}
+
+A critical point to BRKGA is the structure of the chromosomes because they are the individuals and are a representation of a result that have to be mapped to the solution space. Then a good choice is really important.
+
+For this problem, the chromosome has to contain information about the routes of all vehicles. As has been already mentioned more than one time, those roads are in fact cycles in a graph. Therefore the chromosome has to represent cycles in a graph. 
+
+The selected structure is expained in the next points.
+\begin{itemize}
+	\item The chromosome will have as many gens as the number of locations of the problem.
+	\item Every gen position on the entire chromosome will represent the location with the same position in the locations set.
+	\item And the value of every gen will represents the location that precedes the location with the same position as the gen position in the chromosome.
+	\item The gen that represents the starting location will not have any predecessor. Its value will be enforced to zero.
+\end{itemize}
+
+Here is an example of a chromosome and its mapping to solution space. The chromosome is on table \ref{t:example_chromosome} and its mapping to solution space is at image \ref{img:chromosome_representation}.
+
+\begin{table}[H]
+	\centering
+	\caption{Example of a chromosome for a 6-locations problem.}
+	\label{t:example_chromosome}
+	\label{my-label}
+	\begin{tabular}{@{}| c | c | c | c | c | c |@{}}
+		0 & 1 & 4 & 1 & 6 & 1 \\
+	\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=50mm]{imgs/example_chromosome_decode.png}
+	\caption{Representation of the chromosome at solution space}
+	\label{img:chromosome_representation}
+\end{figure}
+
+\subsection{Decoder}
 
 \chapter{Comparissons}\label{ch:comparisson}
 
