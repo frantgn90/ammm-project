@@ -1,3 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{n+nb}{int} \PYG{n}{maxW}\PYG{p}{[}\PYG{n}{n} \PYG{o+ow}{in} \PYG{n}{N}\PYG{p}{]}\PYG{o}{=...}\PYG{p}{;}
-\end{Verbatim}

@@ -367,6 +367,64 @@ class Solution(object):
         return chromosome
         
     def fromChromosome(self, chromosome, problem):
+        # DECODER V2
+        
+        # The value of the chromosome is giving us the order in which we are going
+        # to insert the location to the solution
+        
+        locations = problem.getLocations()
+        locations_gens = zip(chromosome, locations)
+        locations_gens = filter(lambda x: x[1].getId() != self.startLocationId, locations_gens)
+        
+        sorted_locations_gens = sorted(locations_gens)
+        
+        last_location = problem.getLocationById(self.startLocationId)
+        travel_time = 0
+        max_travel_time = 0
+        nvehicles = 1
+        
+        for location_gen in sorted_locations_gens:
+            location = location_gen[1]
+                
+            path_to_next = problem.getPathsFromTo(last_location.getId(), location.getId())
+            time_to_next = travel_time + last_location.getTask() + max(path_to_next.getDistance(),location.getminW())
+            
+            if time_to_next <= location.getmaxW():
+                path_to_next_to_sl = problem.getPathsFromTo(location.getId(), self.startLocationId)
+                time_to_next_to_sl = time_to_next + location.getTask() + path_to_next_to_sl.getDistance()
+                
+                if time_to_next_to_sl <= 720:
+                    travel_time = time_to_next
+                    last_location = location
+                    continue
+            
+            # In this case, return to sl and start new vehicle
+            path_to_sl = problem.getPathsFromTo(last_location.getId(), self.startLocationId)
+            time_to_sl = travel_time + last_location.getTask() + path_to_sl.getDistance()
+            
+            if time_to_sl > max_travel_time:
+                max_travel_time = time_to_sl
+            
+            path_sl_to_next = problem.getPathsFromTo(self.startLocationId, location.getId())
+            travel_time = path_sl_to_next.getDistance()
+            last_location = location
+            nvehicles += 1
+            
+        # Last return to sl
+        path_to_sl = problem.getPathsFromTo(location.getId(), self.startLocationId)
+        travel_time = travel_time + location.getTask() + path_to_sl.getDistance()
+        
+        if travel_time > max_travel_time:
+            max_travel_time = travel_time
+        
+        self.nVehicles = nvehicles
+        self.lastArrived = max_travel_time
+        self.is_feasible = True
+        
+        return
+    
+    
+        # DECODER V1
         # Chromosome pre-process: The first step of the decoder is to do the 
         # needed transformations from the raw chromosome in order to obtain a 
         # depurated one that can be mapped to a solution in terms of graph constraints.
@@ -589,7 +647,7 @@ class Solution(object):
         res+= "\n"
         
         # Routes
-        
+        '''
         for vehicle in self.solution:
             res+= "*"+" "*(WIDTH_PRINT-2)+"*\n"        
             for path in vehicle:
@@ -604,6 +662,6 @@ class Solution(object):
             
         res+= "*"*WIDTH_PRINT      
         res+="\n"
-        
+        '''
         
         return res

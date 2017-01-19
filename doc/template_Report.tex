@@ -69,7 +69,7 @@ Master in Research and Innovation}
 	In this project has been developed an Integer Linear Programming model in order to optimize the routes for a fleet of vehicles with temporal constraints derived from the distance between locations and from the tasks that has to be done for every location. Also have been developed different meta-heuristic strategies in order to get results more efficiently in terms of exeuction time even if there are not the optimal but close enough. Finnaly comparissons in term of execution time and solution quality have been done. 
 	
 \section{Document structure}
-	The structure of this document is the following: The problem definition is done in chapter \ref{ch:problem_definition}. Here it is explained the problem that is faced, which constraints is needed to take into account and what we want to optimize. At chapter \ref{ch:ilp_model} is explained the mathematical model that has been developed, i.e. the decission variables and also the constraints with a mathematical nomenclature. After this chapter, at chapter \ref{ch:meta_heuristics} is explained how it has been used the heuristics approach in order to face with the problem, two meta-heuristics has been used: GRASP\footnote{Greedy Adaptative Search Procedure} and BRKGA\footnote{Biased Random-Key Genetic Algorithm}. After perform several executions for those approaches, a comparisson in terms of time and quality of the result is done at chapter \ref{ch:comparisson}. Finnally a discussion about the results obtained is done at chapter \ref{ch:discussion} and the conclusions of the project are explained at chapter \ref{ch:conclusions}
+	The structure of this document is the following: The problem definition is done in chapter \ref{ch:problem_definition}. Here it is explained the problem that is faced, which constraints is needed to take into account and what we want to optimize. At chapter \ref{ch:ilp_model} is explained the mathematical model that has been developed, i.e. the decission variables and also the constraints with a mathematical nomenclature. After this chapter, at chapter \ref{ch:meta_heuristics} is explained how it has been used the heuristics approach in order to face with the problem, two meta-heuristics has been used: GRASP\footnote{Greedy Adaptative Search Procedure} and BRKGA\footnote{Biased Random-Key Genetic Algorithm}. After perform several executions for those approaches, a comparisson in terms of time and quality of the result is done at chapter \ref{ch:comparisson}. Finnally conclusions of the project are explained at chapter \ref{ch:conclusions}
 \end{abstract}
 
 \chapter{Problem definition}\label{ch:problem_definition}
@@ -366,9 +366,10 @@ This greedy function is trying to give more importance to those candidates that 
 			\RETURN{infeasible}\\
 		
 		\\
-		q_{min} \GETS min(q(c) \quad \forall c \in C)\\
-		q_{max} \GETS max(q(c) \quad \forall c \in C)\\
-		RCL \GETS {c \in C \text{ s.t. } q(c) \leq q_{min} + \alpha * (q_{max} - q_{min}) }\\
+		\COMMENT{Notice that q(c) returns the greedy value for candidate c.}\\
+		q_{min} \GETS min(q(c, TravelTime) \quad \forall c \in C)\\
+		q_{max} \GETS max(q(c, TravelTime) \quad \forall c \in C)\\
+		RCL \GETS {c \in C \text{ s.t. } q(c, TravelTime) \leq q_{min} + \alpha * (q_{max} - q_{min}) }\\
 		\text{select } c \in RCL \text{ at random }\\
 		\\
 		S = S \cup {c}\\
@@ -391,7 +392,7 @@ This greedy function is trying to give more importance to those candidates that 
 	paths \GETS pathsFrom(FromLocation)\\
 	\COMMENT{Filter unattainable locations}\\
 	\FOREACH c \in paths \DO
-		\IF maxw(destination(c)) \geq TravelTime \THEN
+		\IF maxw(destination(c)) \geq TravelTime  + task(FromLocation) + distance(c)\THEN
 			C = C \cup c\\	
 	\COMMENT{Filter visited locations}\\
 	\FOREACH c \in C \DO
@@ -494,42 +495,87 @@ This greedy function is trying to give more importance to those candidates that 
 
 \subsection{Chromosome structure}
 
-A critical point to BRKGA is the structure of the chromosomes because they are the individuals and are a representation of a result that have to be mapped to the solution space. Then a good choice is really important.
+For this implementation, the chromosome will encode the order in which the locations are pushing to the solution, in fact is a factor for the greedy value. The decoder is behaving as a greedy algorithm but with some modification in order to work with the chromosome as you will see at section  \ref{ss:brkga_decoder}.
 
-For this problem, the chromosome has to contain information about the routes of all vehicles. As has been already mentioned more than one time, those roads are in fact cycles in a graph. Therefore the chromosome has to represent cycles in a graph. 
+Then the chromosome will have as many gens as locations, and every gen will have a value from 0 to 1. This value is the weight that modify the order of the candidate set at decoder.
 
-The selected structure is expained in the next points.
-\begin{itemize}
-	\item The chromosome will have as many gens as the number of locations of the problem.
-	\item Every gen position on the entire chromosome will represent the location with the same position in the locations set.
-	\item And the value of every gen will represents the location that precedes the location with the same position as the gen position in the chromosome.
-	\item The gen that represents the starting location will not have any predecessor. Its value will be enforced to zero.
-\end{itemize}
+\subsection{Decoder}\label{ss:brkga_decoder}
 
-Here is an example of a chromosome and its mapping to solution space. The chromosome is on table \ref{t:example_chromosome} and its mapping to solution space is at image \ref{img:chromosome_representation}.
+Recapping, the greedy algorithm is based on the idea to bring for every candidate a value that means the quality of every one of them. This value is provided by the greedy function. For purely greedy algorithms, the candidates are sorted by this value and then the best one (the first one of the list) will be included on the solution. An evolution of greedy is GRASP that is randomizing the pick of a candidate with its RCL. This decoder is following the same idea. In this case, every gen is multiplied for the greedy value of the destination of every candidate (remember that the candidates are paths). It means that the gens are affecting to the position of the candidates in the candidates list. Once we have all the candidates sorted, the first one is picked. Notice that the decoder is deterministic. The randomicity in BRKGA is not in the greedy part but in the generation of mutants.
 
-\begin{table}[H]
+You can see the pseudocode of decoder at \ref{pc:brkga_decoder}
+
+\begin{pseudocode}{ExploreReassignementNeighbourhood}{chromosome}
+	\label{pc:brkga_decoder}
+	S \GETS \varnothing\\
+	LastLocation \GETS l_{s}\\
+	VisitedLocations \GETS \varnothing\\
+	\\
+	\WHILE \NOT size(VisitedLocations)=n-1 \DO
+	\BEGIN
+	TravelTime \GETS tavelTime(S)\\
+	\COMMENT{The candidates are not locations but paths}\\
+	C \GETS ConstructCL(LastLocation, TravelTime, VisitedLocations)\\
+	\IF size(C) = 0 \THEN
+	\RETURN{infeasible}\\
+	\\
+	\COMMENT{getGen(chromosome, location) provides the value of the gen for location.}\\
+	c \GETS min(q(c, TravelTime)*getGen(chromsome, destination(c)) \quad \forall c \in C)\\
+	\\
+	S = S \cup {c}\\
+	\IF destination(c) \neq l_{s} \THEN
+	VisitedLocations = VisitedLocations \cup destination(c)\\
+	LastLocation \GETS destination(c)\\
+	\END\\
+	\\
+	\COMMENT{The return path to the start location for the last vehicle must be added.}\\
+	ReturnPath \GETS getPath(destination(c), l_{s})\\
+	S = S \cup ReturnPath\\
+	
+	\RETURN S
+\end{pseudocode}
+
+\chapter{Tunning and Comparissons}\label{ch:comparisson}
+
+There are some interesting comparissons that can be do, not just compare ILP with meta-heuristics solutions. An interesting studies are for try to tune accuratelly the meta-heuristics parameteres. In this chapter you will see how those parameteres are tuned through an empirical reasoning. An study of the $\alpha$ value for GRASP is done at section \ref{s:tuning_alpha}. More parameters have to be taken into account for BRKGA, that are: percentage of elites, percentage of mutants, number of individuals, percentage on inheritage and number of generations. In this case some simplications have done in order to fulfil with the deadline. You can see this study at section \ref{s:tuning_brkga_params}. Finally, at section \ref{s:comparisson} a comparisson between ILP and meta-heuristics is done.
+
+\section{Tuning $\alpha$ parameter for GRASP}\label{s:tuning_alpha}
+
+On GRASP, a good tune of $\alpha$ parameter is a critical issue. When this parameter is 1 the met-heuristics becomes a completelly random algorithm. By the other hand when it becomes 0, the algorithms will behave as a purelly greedy one.
+
+Some tests has be done with different number of locations for different $\alpha$. 20 tests are done. 4 test por every number of locations. And the number of locations as gone from 10 up to 100.
+
+As you can see in figure \ref{img:grasp_alfa} the most suitable $\alpha$ for this problem is near $0,25$ then we will use this value for the next experiments.
+
+This plot confronts the quality of the solution and the $\alpha$ parameter. For this experiment has been toked the best solution of the four experiment for each $\alpha$ and number of locations and compare the rest of the solutions whith same parameters which this one.
+
+One interesting fact that also can be seen on the plot is that as we are incrementing the number of locations, the degradation because $\alpha$ is also increasing. An explanation for this fact is the synthetic instance generator. The instance generator developed for this project is just ensuring that you will have at least the basic solution that is have as much vehicles as locations. After ensure that it relaxes some data by randomizing values like task and time windows. When you have a little ammmount of locations this relaxation is not enough and the number of possible solutions is still near 1. Since the number of locations is incrementing, then the number of possible solutions is also incrementing and by get bigger $\alpha$ we are seeing those other solutions.
+
+
+\begin{figure}
+	\caption{Evolution of quality of solution changing $\alpha$ parameter.}
+	\label{img:grasp_alfa}
 	\centering
-	\caption{Example of a chromosome for a 6-locations problem.}
-	\label{t:example_chromosome}
-	\label{my-label}
-	\begin{tabular}{@{}| c | c | c | c | c | c |@{}}
-		0 & 1 & 4 & 1 & 6 & 1 \\
-	\end{tabular}
-\end{table}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=50mm]{imgs/example_chromosome_decode.png}
-	\caption{Representation of the chromosome at solution space}
-	\label{img:chromosome_representation}
+	\includegraphics[width=0.75\textwidth]{./imgs/grasp_alfa_comparissons}
 \end{figure}
 
-\subsection{Decoder}
 
-\chapter{Comparissons}\label{ch:comparisson}
 
-\chapter{Discussion}\label{ch:discussion}
+\section{Tuning BRKGA parameters}\label{s:tuning_brkga_params}
+
+For BRKGA the tuning is a little bit more difficult than for GRASP. Here we have five parameters to tune.
+\begin{itemize}
+	\item Number of individuals in a poblation.
+	\item Percentage of the poblation that becomes elite.
+	\item Percentage of poblation to generate as mutants.
+	\item Boundary value that decides if a gene is get from elite or from a normal individual on the crossover.
+	\item And finally the number of generation that we want to evolve.
+\end{itemize}
+
+In order to fulfil with the deadline of the project all the needed experiments are not done but just a little subset of them. It has been defined four different sets of parameters and every set has been executed over the same instances like the experiments for the GRASP at section \ref{s:tuning_alpha}.
+
+\section{Comparisson: ILP vs meta-heuristics}\label{s:comparisson}
+
 
 \chapter{Conclusions}\label{ch:conclusions}
 

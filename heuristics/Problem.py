@@ -77,6 +77,9 @@ class Problem(object):
 
     def getnLocations(self):
         return self.nLocations
+        
+    def getLocations(self):
+        return self.locations
 
     def getPaths(self):
         return self.paths

@@ -25,7 +25,7 @@ class Solver_GRASP(object):
             
             if len(cset) == 0:
                 print ("GRASP: No more candidates but solution is not done.")
-                break
+                return
                 
             # Generating RCL
             #qmin=min(cset, key=lambda x: self.__greedy_value(x, travel_time))
@@ -46,8 +46,9 @@ class Solver_GRASP(object):
             # Pick one randomly
             random_pick=random.randrange(len(RCL))
             candidate=RCL[random_pick]
-            '''
+            
             # DEBUG
+            '''
             print "--CSET--"
             for c in cset:
                 print "| {0}: {1}({2})->{3} distance: {4} greedy:{5}".format(c.getId(), c.getSource().getId(),c.getSource().getarrivingTime(), 
@@ -105,12 +106,14 @@ class Solver_GRASP(object):
     def __construct_cs(self, from_location_id, travel_time):
         # Get all candidate paths filtered by start location
         paths = self.problem.getPathsFrom(from_location_id)
+        get_from_location = self.problem.getLocationById(from_location_id)
         
         cs = []
         # Get all candidate paths filtered by time
         # TODO: Look for add task and distance to travel_time 
+        # CHANGED!!!
         for p in paths:
-            if p.getDestination().getmaxW() >= travel_time:
+            if p.getDestination().getmaxW() >= travel_time + get_from_location.getTask() + p.getDistance():
                 cs.append(p)
             
             
@@ -154,6 +157,7 @@ class Solver_GRASP(object):
         
     def __greedy_value(self, candidate, travel_time):
         return abs(travel_time+candidate.getDistance()-candidate.getDestination().getminW()+candidate.getSource().getTask())
+        
 
 
 

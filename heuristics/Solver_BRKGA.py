@@ -23,11 +23,12 @@ from Problem import Problem
 
 # Configuration 
 
-config_pElites = 0.25
+config_pElites = 0.20
 config_pMutants = 0.15
-config_numIndividuals = 1024
-config_maxExecTime = 0.5
-config_pInheritanceElite = 0.5
+config_numIndividuals = 15
+config_maxExecTime = 2
+config_pInheritanceElite = 0.7
+config_maxGenerations = 10
 
 # Some pre-calculations
 numGenes = 0
@@ -35,70 +36,41 @@ numElites = int(round(config_pElites * config_numIndividuals))
 numMutants = int(round(config_pMutants * config_numIndividuals))
 numCrossOvers = config_numIndividuals - numElites - numMutants
 
+BIGM=100000
+
 class BRKGA_Individual(object):
-    def __init__(self, solution, chromosome, fitness):
+    def __init__(self, chromosome, fitness):
         self.chromosome = chromosome
         self.fitness = fitness
-        self.solution = solution
-    
+        self.solution = None
+        
     @classmethod
-    def initGreedy(cls, problem):
-        solution = Solution(problem.getnLocations(), problem.getStartLocationId())
-        visitedLocations=[]
-        
-        last_location=problem.getStartLocationId()
-        while not solution.isDone():
-            travel_time = solution.getTravelTime()
-            cset=cls.__construct_cs(
-                    last_location, 
-                    travel_time, visitedLocations, problem)
-            
-            assert len(cset) > 0, ("BRKGA [initGreedy]: No more candidates but " \
-                "solution is not done.")
-            
-            candidate=sorted(cset, key=lambda x: cls.__greedy_value(x, travel_time), 
-                        reverse=False)[0]
-
-            # Add candidate to solution
-            solution.addCandidate(candidate)
-            
-            # We always can return to the startLocation (+1 vehicle)
-            if candidate.getDestination().getId() != problem.getStartLocationId():
-                visitedLocations.append(candidate.getDestination().getId())
-            
-            last_location=candidate.getDestination().getId()
-            
-        # Now is mandatory to add to solution the last path in order to return
-        # to the startLocation
-        from_location=candidate.getDestination().getId()
-        to_location=problem.getStartLocationId()
-        
-        last_path=problem.getPathsFromTo(from_location, to_location)
-        solution.addCandidate(last_path)
-        
-        chromosome = solution.encodeToBRKGA()
+    def initGreedy(cls, problem):        
+        # generate a chromosome (vector of floats)
+        # fill it with random values [0.0 .. 1.0]
+        chromosome = []
+        for numGene in xrange(0, numGenes):
+            chromosome.append(1.0)
         
         # instantiate the new Individual with chromosome and an undefined fitness
-        return(cls(solution, chromosome, solution.getQuality()))
+        return(cls(chromosome, None))
     
     @classmethod
-    def initMutant(cls, problem):
-        numGenes = problem.getnLocations()
-        
+    def initMutant(cls, problem):        
         # generate a chromosome (vector of floats)
         # fill it with random values [0.0 .. 1.0]
         chromosome = []
         for numGene in xrange(0, numGenes):
             chromosome.append(random.uniform(0, 1))
             
-        solution = Solution(problem.getnLocations(), problem.getStartLocationId())
-        solution.fromChromosome(chromosome, problem)
+        #solution = Solution(problem.getnLocations(), problem.getStartLocationId())
+        #solution.fromChromosome(chromosome, problem)
         
-        return(cls(solution, chromosome, solution.getQuality()))
+        #return(cls(solution, chromosome, solution.getQuality()))
+        return(cls(chromosome, None))
     
     @classmethod
     def initCrossOver(cls, elite, nonElite, problem):
-        numGenes = problem.getnLocations()
         pInheritanceElite = config_pInheritanceElite
         
         # chromosomes from parents (elite and non-elite) must have the same size to be crossed
@@ -122,24 +94,72 @@ class BRKGA_Individual(object):
                 gene = nonEliteGen
             chromosome.append(gene)
             
-        solution = Solution(problem.getnLocations(), problem.getStartLocationId())
-        solution.fromChromosome(chromosome, problem)
+        #solution = Solution(problem.getnLocations(), problem.getStartLocationId())
+        #solution.fromChromosome(chromosome, problem)
             
-        return(cls(solution, chromosome, solution.getQuality()))
-      
-    ######################################
-    ## Some problem-dependant functions ##
-    ######################################
+        #return(cls(solution, chromosome, solution.getQuality()))
+        return(cls(chromosome, None))
+
+# An abstract BRKGA decoder
+class BRKGA_Decoder(object):
+    #def __init__(self):
+    #    raise Exception('Abstract method cannot be called')
+    
+    #def getNumGenes(self):
+    #    raise Exception('Abstract method cannot be called')
+    
+    @classmethod
+    def decode(cls, individual, problem):
+        chromosome = individual.chromosome
+        solution = Solution(problem.getnLocations(), problem.getStartLocationId())
+        visitedLocations=[]
+        
+        last_location=problem.getStartLocationId()
+        while not solution.isDone():
+            travel_time = solution.getTravelTime()
+            cset=cls.__construct_cs(
+                    last_location, 
+                    travel_time, visitedLocations, problem)
+            
+            assert len(cset) > 0, ("BRKGA [initGreedy]: No more candidates but " \
+                "solution is not done.")
+            
+            candidate=sorted(cset, key=lambda x: cls.__greedy_value(x, travel_time, chromosome), 
+                        reverse=False)[0]
+
+            # Add candidate to solution
+            solution.addCandidate(candidate)
+            
+            # We always can return to the startLocation (+1 vehicle)
+            if candidate.getDestination().getId() != problem.getStartLocationId():
+                visitedLocations.append(candidate.getDestination().getId())
+            
+            last_location=candidate.getDestination().getId()
+            
+        # Now is mandatory to add to solution the last path in order to return
+        # to the startLocation
+        from_location=candidate.getDestination().getId()
+        to_location=problem.getStartLocationId()
+        
+        last_path=problem.getPathsFromTo(from_location, to_location)
+        solution.addCandidate(last_path)
+        
+        chromosome = solution.encodeToBRKGA()
+        
+        individual.solution = solution
+        individual.fitness = solution.getQuality()
+        print "INDIVIDUAL DECODED fitness:" + str(individual.fitness)
     
     @classmethod
     def __construct_cs(cls, from_location_id, travel_time, visitedLocations, problem):
         # Get all candidate paths filtered by start location
         paths = problem.getPathsFrom(from_location_id)
+        get_from_location = problem.getLocationById(from_location_id)
         
         cs = []
         # Get all candidate paths filtered by time
         for p in paths:
-            if p.getDestination().getmaxW() >= travel_time:
+            if p.getDestination().getmaxW() >= travel_time + get_from_location.getTask() + p.getDistance():
                 cs.append(p)
             
             
@@ -168,36 +188,18 @@ class BRKGA_Individual(object):
             return (time_to_sl < 720)
             
         cs=filter(can_return_to_sl, cs)
-        
-        # Sort by waiting time. The waiting time is not only from the
-        # point of view of the worker, but also from the point of view
-        # of the customer.
-
-        cs = sorted(cs, 
-                key=lambda x: cls.__greedy_value(x, travel_time),
-                reverse=False)
         return cs
         
     @classmethod
-    def __greedy_value(self, candidate, travel_time):
-        return abs(travel_time+candidate.getDistance()-candidate.getDestination()\
+    def __greedy_value(self, candidate, travel_time, chromosome):
+        return chromosome[candidate.getDestination().getId()-1]*abs(travel_time+candidate.getDistance()-candidate.getDestination()\
             .getminW()+candidate.getSource().getTask())
-
-# An abstract BRKGA decoder
-class BRKGA_Decoder(object):
-    def __init__(self):
-        raise Exception('Abstract method cannot be called')
-    
-    def getNumGenes(self):
-        raise Exception('Abstract method cannot be called')
-    
-    def decode(self, individual):
-        raise Exception('Abstract method cannot be called')
 
 # Inherits from a parent abstract solver.
 class Solver_BRKGA(object):
     def __init__(self, problem):
         self.problem = problem
+        global numGenes
         numGenes = self.problem.getnLocations()
         
         assert numElites > 0
@@ -219,15 +221,13 @@ class Solver_BRKGA(object):
     def decodeIndividuals(self, population, decoder):
         # decode individuals not already decoded, i.e. with undefined fitness, with a specific decoder
         it_decodedIndividuals = 0
-        startTime = time.time()
         
         for individual in population:
             if(individual.fitness is not None): continue
-            decoder.decode(individual)
+            decoder.decode(individual, self.problem)
             it_decodedIndividuals += 1
         
-        it_elapsedDecodingTime = time.time() - startTime
-        return(it_elapsedDecodingTime, it_decodedIndividuals)
+        return(it_decodedIndividuals)
     
     def sortIndividuals(self, population):
         # sort individuals in a population by their fitness in ascending order
@@ -261,19 +261,19 @@ class Solver_BRKGA(object):
         return(newPopulation)
     
     def Solve(self):
+        decoder = BRKGA_Decoder()
         bestSolution = self.solution=Solution(self.problem.getnLocations(), self.problem.getStartLocationId())
         population = self.initializeIndividuals()
         
         generation = 0
-        startTime = time.time()
         bestHighestLoad = float("inf")
         
-        while(time.time() - startTime < config_maxExecTime):
+        while(generation < config_maxGenerations):
             generation += 1
             
             # decode the individuals using the decoder
             # NOTE: They are already decoded
-            # it_elapsedDecodingTime, it_decodedIndividuals = self.decodeIndividuals(population, decoder)
+            it_decodedIndividuals = self.decodeIndividuals(population, decoder)
             
             # sort them by their fitness
             self.sortIndividuals(population)
@@ -287,6 +287,8 @@ class Solver_BRKGA(object):
             
             # evolve the population
             population = self.evolveIndividuals(population)
+            
+            print "Generation {0} done".format(str(generation))
         
         return(bestSolution)
         

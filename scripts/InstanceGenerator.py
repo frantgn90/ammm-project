@@ -47,6 +47,32 @@ def calculeDistances(ncities, poscities):
         distances.append(dists)
 
     return distances
+    
+def calculeDistances2(ncities, poscities, stLocation):
+    # Calcule cartesian distances
+    # stLocation is on (0,0)
+    distances=list()
+    
+    for i in range(ncities):
+        dists=[]
+        for j in range(ncities):
+            if i==j: 
+                dists.append(0)
+            elif i==stLocation-1:
+                d=math.sqrt((0-poscities[j][0])**2 + (0-poscities[j][1])**2)
+                
+                dists.append(int(d))
+            elif j==stLocation-1:
+                d=math.sqrt((poscities[i][0]-0)**2 + (poscities[i][1]-0)**2)
+                dists.append(int(d))
+            else:
+                d=math.sqrt((poscities[i][0]-poscities[j][0])**2 + \
+                        (poscities[i][1]-poscities[j][1])**2)
+                
+                dists.append(int(d))
+        distances.append(dists)
+
+    return distances
 
 def calculeTask(ncities, poscities):
     # TODO: The task should be inversely proportional
@@ -65,6 +91,17 @@ def calculeTask(ncities, poscities):
         
     return task
 
+def calculeTask2(ncities, distances, stLocation):
+    task=[]
+    for i in range(ncities):
+        from_st = distances[stLocation-1][i]
+        to_st = distances[i][stLocation-1]
+        
+        task_time = random.randrange(0, (720-from_st-to_st))
+        task.append(task_time)
+    
+    return task
+    
 def calculeWindows(ncities):
     # TODO: To model
 
@@ -83,25 +120,61 @@ def calculeWindows(ncities):
         
     return minW, maxW
 
+def calculeWindows2(ncities, distances, tasks, stLocation):
+    minW=[]
+    maxW=[]
+    
+    WSIZE=500
+    
+    for i in range(ncities):
+        if i == stLocation-1: continue
+        
+        from_st = distances[stLocation-1][i]
+        #Purelly random
+        min_w = random.randrange(0, from_st)
+        max_w = random.randrange(from_st, 720)
+        
+        # Random with max windows size
+        #min_w = random.randrange(max(0,from_st-WSIZE), from_st-1)
+        #max_w = random.randrange(from_st, min(720,from_st+WSIZE))
+        
+        # Exact windows size
+        #min_w = max(0,from_st-(WSIZE/2))
+        #max_w = min(720,from_st+WSIZE/2)
+        
+        maxW.append(max_w)
+        minW.append(min_w)
+        
+        #maxW.append(720)
+        #minW.append(0)
+        
+    minW.insert(stLocation-1,0)
+    maxW.insert(stLocation-1,720)
+    return minW, maxW
+    
 def main(argc, argv):
     if argc>1:
-        ncities=argv[1]
+        ncities=int(argv[1])
     else:
         ncities=NUM_CITIES
 
     # This calculus is enforcing that the maximum distance
     # between two cities in the worst case (diagonal) 
     # is at most 720/ncitis in order to ensure feasible solutions.
-    SPACE_DIM=math.sqrt( (MAX_DISTANC/ncities)**2/2)
+    #SPACE_DIM=math.sqrt( (MAX_DISTANC/ncities)**2/2)
+    SPACE_DIM=math.sqrt( (MAX_DISTANC/2)**2/2)
     
     ###################
     # Generating data #
     ###################
-    poscities = generatePoints(ncities, SPACE_DIM)
-    distances = calculeDistances(ncities, poscities)
-    citytask  = calculeTask(ncities, poscities)
-    minW, maxW  = calculeWindows(ncities)
     stLocation = random.randrange(1,ncities)
+    
+    #poscities = generatePoints(ncities, 2*SPACE_DIM)
+    poscities = generatePoints(ncities, SPACE_DIM)
+    #distances = calculeDistances2(ncities, poscities, stLocation)
+    distances = calculeDistances(ncities, poscities)
+    citytask  = calculeTask2(ncities, distances, stLocation)
+    minW, maxW  = calculeWindows2(ncities, distances, citytask, stLocation)
     
     citytask[stLocation-1]=0
     
@@ -110,7 +183,8 @@ def main(argc, argv):
     ####################
     # Writting results #
     ####################
-    outfile=open("./Instances/instance_{0}_{1}.dat".format(ncities, RAND_SEED), "w")
+    filename="./instance_{0}_{1}.dat".format(ncities, RAND_SEED)
+    outfile=open(filename, "w")
     
     import pprint
     pp = pprint.PrettyPrinter(indent=4, depth=200, stream=outfile)
@@ -132,6 +206,8 @@ def main(argc, argv):
     outfile.write(";\nmaxW=")
     pp.pprint(maxW)
     outfile.write(";")
+    
+    print ("{0} input file has been generated.".format(filename))
 
 if __name__=="__main__":
 	main(len(sys.argv), sys.argv)

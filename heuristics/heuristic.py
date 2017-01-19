@@ -8,7 +8,7 @@ from Solver_GRASP import Solver_GRASP
 from Solver_BRKGA import Solver_BRKGA
 from Solution import Solution
 
-LS_NB="reassignement" # "exchange" 
+LS_NB="reassignement" # ""  exchange
 LS_ST="best-improvement" # "first-improvement"
 LS_ALFA=0.3
 
@@ -21,7 +21,11 @@ def main(argc, argv):
     if argc < 3: Usage(" ".join(argv))
 
     heuristic = argv[1]
-    input_data_file = argv[2]
+    if argc == 4:
+        LS_ALFA=float(argv[2])
+        input_data_file = argv[3]
+    else:
+        input_data_file = argv[2]
 
     problem = Problem(input_data_file)
     #problem.print_test()
