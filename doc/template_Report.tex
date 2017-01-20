@@ -61,7 +61,7 @@ Master in Research and Innovation}
 \renewcommand{\labelitemi}{\localtextbulletone}
 
 \begin{abstract}
-	Optimization problems can appear in almost all situations on life. There are specially important those ones that appears on the industry because if we can achieve an optimal solution, we will improve the efficiency of the industrial process and then get lower manufacturing cost. This improvement of the costs have an effect on the competitiveness of the companies and on the final quality of their products and there are always good news for the customers. The challeging part is that those kind of problem have a really high computational complexity therefore there are several methods to face with them. By one hand we have the, let's say, always-optimality methods that obtain the optimal solution but without taking into account the huge amount of time that it could imply. e.g. ILP\footnote{Integer Linear Programming}. By the other hand we have those methods that concerns about the execution time and are looking for a tradeof between the exeution time and the quality of the solution\footnote{The distance to the optimal}.
+	Optimization problems can appear in almost all situations on life. There are specially important those ones that appears on the industry because if we can achieve an optimal solution, we will improve the efficiency of the industrial process and then get lower manufacturing cost. This improvement of the costs have an effect on the competitiveness of the companies and on the final quality of their products and there are always good news for the customers. The challeging part is that those kind of problem have a really high computational complexity therefore there are several methods to face with them. By one hand we have the, let's say, always-optimality methods that obtain the optimal solution but without taking into account the huge amount of time that it could imply. e.g. ILP\footnote{Integer Linear Programming}. By the other hand we have those methods that concerns about the execution time and are looking for a tradeoff between the exeution time and the quality of the solution\footnote{The distance to the optimal}.
 	
 	In this pages will be shown this two approaches in order to get the optimal routes for a fleet of vehicles taking into account temporal constraints.
 	
@@ -73,14 +73,14 @@ Master in Research and Innovation}
 	In this project has been developed an Integer Linear Programming model in order to optimize the routes for a fleet of vehicles with temporal constraints derived from the distance between locations and from the tasks that has to be done for every location. Also have been developed different meta-heuristic strategies in order to get results more efficiently in terms of exeuction time even if there are not the optimal but close enough. Finnaly comparisons in term of execution time and solution quality have been done. 
 	
 \section{Document structure}
-	The structure of this document is the following: The problem definition is done in chapter \ref{ch:problem_definition}. Here it is explained the problem that is faced, which constraints is needed to take into account and what we want to optimize. At chapter \ref{ch:ilp_model} is explained the mathematical model that has been developed, i.e. the decission variables and also the constraints with a mathematical nomenclature. After this chapter, at chapter \ref{ch:meta_heuristics} is explained how it has been used the heuristics approach in order to face with the problem, two meta-heuristics has been used: GRASP\footnote{Greedy Adaptative Search Procedure} and BRKGA\footnote{Biased Random-Key Genetic Algorithm}. After perform several executions for those approaches, a comparison in terms of time and quality of the result is done at chapter \ref{ch:comparison}. Finnally conclusions of the project are explained at chapter \ref{ch:conclusions}
+	The structure of this document is the following: The problem definition is done in chapter \ref{ch:problem_definition}. Here it is explained the problem that is faced, which constraints is needed to take into account and what we want to optimize. At chapter \ref{ch:ilp_model} is explained the ILP model that has been developed, i.e. the decission variables and also the constraints with a mathematical nomenclature. After this chapter, at chapter \ref{ch:meta_heuristics} is explained how it has been used the heuristics approach in order to face with the problem, two meta-heuristics has been used: GRASP\footnote{Greedy Adaptative Search Procedure} and BRKGA\footnote{Biased Random-Key Genetic Algorithm}. After perform several executions for those approaches, a comparison in terms of time and quality of the result is done at chapter \ref{ch:comparison}. Finnally conclusions of the project are explained at chapter \ref{ch:conclusions}
 \end{abstract}
 
 \chapter{Problem definition}\label{ch:problem_definition}
 \section{Description}
 We have been asked to help one logistic company in the design of the daily routes of its fleet of vehicles. The workload for every day consist in some tasks that have to be done at a different locations, therefore, the problem is to identify the optimal routes for the minimum number of vehicles in order to perform all the work in time, i.e. starting at 8 a.m. and finalizing before 8 p.m. 
 
-For that purpose we are given a set of locations and a start location $l_{s}$ where all the vehicles will start. For our point of view, the locations are not needed at all but we need the distance in terms of time between all of them. Because that we will be provided by the $dist_{l_{1},l_{2}}$ input data.
+For that purpose we are given a set of locations, start location $l_{s}$ and the distances between them, $dist_{l1,l2}$.
 
 As is already mentioned, in every location (but not in $l_{s}$) there is a task that has to be done, then, also the information about how many time is needed for every task is provided as input data. We are talking about $task_{l}$.
 
@@ -98,16 +98,16 @@ This problem has been formally defined as a relaxed TSP\footnote{Travel Salesman
 
 This point of view allows to manage this problem without taking into account vehicles. The number of vehicles will be, in fact, the number of cycles in the solution.
 
-As in TSP we can represent the towns and all routes as a directed weighted complete graph, then, we can describe a route of every vehicle by mean of a set of edges that describes a cycle. Remember that the cycle must implie the $l_{s}$ node.
+As in TSP we can represent the towns and all routes as a directed weighted complete graph, then, we can describe a route of every vehicle by mean of a set of edges that describes a cycle.
 
 The definition of the graph is defined by the below expression. Is important to mention that the cardinal of the $A$ set is like that because the distance of the travel from location a to location b could be different than the travel from b to a because the roads or whatever else.
 $$G=(V,A) \quad where \quad \text{V: set of nodes, A: set of directed edges}$$
 $$|V|=n, \text{being n = number of locations} \quad |A|=n^{2}-n$$
 
-Now, let's define the set the whole possible cycles in the graph as $C$ where every cycle is defined as a subset of edges that fulfill all the conditions to be a cycle. Then, the set of all possible vehicles $VH \subset C$ are all the cycles that imples the $l_{s}$ as is described in the next expression:
+Now, let's define the set with all possible cycles in the graph as $C$ where every cycle is defined as a subset of edges that fulfill all the conditions to be a cycle. Then, the set of all possible vehicles $VH \subset C$ are all the cycles that imples the $l_{s}$ as is described in the next expression:
 $$vh \in VH \Leftrightarrow \exists a \in vh \text{ s.t. } a_{source} = l_{s} \lor a_{destination} = l_{s}$$
 
-We can describe a set of potential solutions for the problem $PS \subset VH$ as all of subsets of $VH$ that cover all the locations without repeat any one of them. Those are potential solutions because for the moment we have not token into account the temporal constraints. Finally, the set of feasible solutions will be $S \subseteq PS$. And the challenging point is to get the optimal solution from this set.
+We can describe a set of potential solutions for the problem $PS \subset VH$ as all of subsets of $VH$ that cover all the locations without repeat any one of them. Those are potential solutions because for the moment we have not taken into account the temporal constraints. Finally, the set of feasible solutions will be $S \subseteq PS$. And the challenging point is to get the optimal solution from this set.
 
 \subsection{Input data}
 
@@ -290,7 +290,7 @@ This is the ILP implementation for the constraints defined at section \ref{ss:ti
 	$$ \sum\limits_{i \in V} arriving_{j} \geq (arriving_i + task_i + distance_{i, j}) - (M*(1-tracked_{i, j})) \quad \forall j \in A \text{ s.t. } j \neq l_{s}$$
 		
 	For this equation, $i$ means the source location and $j$ means the destination. Take into account that we are avoiding the constraints for the $l_{s}$ because we are already restricting it to $0$ with the constraint above.
-	The key point is that when the path from $i$ to $j$ is done (tracked is True) then we have a strong constraint\footnote{The constraint is great or equal because the arriving time could be greater than that if the vehicle must wait because the $minw$.}. By the other hand, if the path is not token then this is so soft constraint, in fact this is not restricting anything.
+	The key point is that when the path from $i$ to $j$ is done (tracked is True) then we have a strong constraint\footnote{The constraint is great or equal because the arriving time could be greater than that if the vehicle must wait because the $minw$.}. By the other hand, if the path is not taken then this is so soft constraint, in fact this is not restricting anything.
 	
 	\item This next constraint is concerned about the minimum windows arriving time. The point is that if the vehicle arrives before the minimum time, then it has to wait. The way to do so is restricting that the arriving time will be at least the minimum window. It is in fact a waiting.
 	
@@ -317,7 +317,7 @@ This is the ILP implementation for the constraints defined at section \ref{ss:ti
 
 \subsection{Avoiding cycles w/o starting location for free}\label{ss:arriving_time_0_implications}
 
-At section \ref{ss:relased_tsp} has been explained how a vehicle is in fact a cycle. The important point is that all cycles represents all vehicles needed in our model and they must imply the start location. As you can see at section \ref{s:ilp_constraints} there is no explicit constraint that enforce this situation, so how it is actually  working?
+At section \ref{ss:relased_tsp} has been explained how a vehicle is in fact a cycle. The important point is that all cycles represents all vehicles needed in our solution and they must imply the start location. As you can see at section \ref{s:ilp_constraints} there is no explicit constraint that enforce this situation, so how it is actually  working?
 
 Imagine a situation in which one we have two locations in a cycle and no one of them are the starting. And now take into account the way this model is enforcing a good value for the arriving time for locations. Is not possible to have an arriving time in any of them because there is not a fixed value, so the arriving time for both of them will be undefined, in other words, is not a solution.
 
@@ -333,7 +333,7 @@ Just mention that the shape of the results for the meta-heuristics are the same 
 
 \section{GRASP implementation}
 \subsection{Costructive phase}
-This meta-heuristic has a constructive phase that is concerned to build up a feasible solution. This phase is not deterministic because the randomization done on the candidate pick process. It means that for every execution, different solution could be emerge\footnote{For $\alpha \neq 1$}. This part is based on a randomized greedy algorithm, so a greedy function is also needed.
+This meta-heuristic has a constructive phase that is concerned to build up a feasible solution. This phase is not deterministic because the randomness done on the candidate pick process. It means that for every execution, different solution could be emerge\footnote{For $\alpha \neq 1$}. This part is based on a randomized greedy algorithm, so a greedy function is also needed.
 
 You can see the constructive phase into two pseudo-codes. The constructive phase itself is at psheudcode \ref{pc:constructive_phase}. But in order to understand better what the developed heuristic is doing, you can see how the candidates set is generated at pseudocode \ref{pc:construct_cl}.
 
@@ -507,7 +507,7 @@ Then the chromosome will have as many gens as locations, and every gen will have
 
 \subsection{Decoder}\label{ss:brkga_decoder}
 
-Recapping, the greedy algorithm is based on the idea to bring for every candidate a value that means the quality of every one of them. This value is provided by the greedy function. For purely greedy algorithms, the candidates are sorted by this value and then the best one (the first one of the list) will be included on the solution. An evolution of greedy is GRASP that is randomizing the pick of a candidate with its RCL. This decoder is following the same idea. In this case, every gen is multiplied for the greedy value of the destination of every candidate (remember that the candidates are paths). It means that the gens are affecting to the position of the candidates in the candidates list. Once we have all the candidates sorted, the first one is picked. Notice that the decoder is deterministic. The randomicity in BRKGA is not in the greedy part but in the generation of mutants.
+Recapping, the greedy algorithm is based on the idea to bring for every candidate a value that means the quality of every one of them. This value is provided by the greedy function. For purely greedy algorithms, the candidates are sorted by this value and then the best one (the first one of the list) will be included on the solution. An evolution of greedy is GRASP that is randomizing the pick of a candidate with its RCL. This decoder is following the same idea. In this case, every gen is multiplied for the greedy value of the destination of every candidate (remember that the candidates are paths). It means that the gens are affecting to the position of the candidates in the candidates list. Once we have all the candidates sorted, the first one is picked. Notice that the decoder is deterministic. The randomness in BRKGA is not in the greedy part but in the generation of mutants.
 
 You can see the pseudocode of decoder at \ref{pc:brkga_decoder}
 
@@ -543,11 +543,11 @@ You can see the pseudocode of decoder at \ref{pc:brkga_decoder}
 
 \chapter{Tunning and Comparisons}\label{ch:comparison}
 
-There are some interesting comparisons that can be do, not just compare ILP with meta-heuristics solutions. An interesting studies are for try to tune accuratelly the meta-heuristics parameteres. In this chapter you will see how those parameteres are tuned through an empirical reasoning. An study of the $\alpha$ value for GRASP is done at section \ref{s:tuning_alpha}. More parameters have to be taken into account for BRKGA, that are: percentage of elites, percentage of mutants, number of individuals, percentage on inheritage and number of generations. In this case some simplications have done in order to fulfil with the deadline. You can see this study at section \ref{s:tuning_brkga_params}. Finally, at section \ref{s:comparison} a comparison between ILP and meta-heuristics is done.
+There are some interesting comparisons that can be done, not just compare ILP with meta-heuristics solutions. An interesting studies are for try to tune accuratelly the meta-heuristics parameteres. In this chapter you will see how those parameteres are tuned through an empirical reasoning. An study of the $\alpha$ value for GRASP is done at section \ref{s:tuning_alpha}. More parameters have to be taken into account for BRKGA, that are: percentage of elites, percentage of mutants, number of individuals, percentage on inheritage and number of generations. In this case some simplications have done in order to fulfil with the deadline. You can see this study at section \ref{s:tuning_brkga_params}. Finally, at section \ref{s:comparison} a comparison between ILP and meta-heuristics is done.
 
 \section{Instances complexity factors}\label{s:complexity_factors}
 
-Fisrt of all a little study has been done in order to know in a better way which factors made a problem, computational power hungry or not for ILP. A naive approach could be to say just the number of locations. But there are more factors that affects on the complexity of the problem. Since ILP is taking into account all the possible solutions and then get the best one, when you are providing to the ILP model an instance where almost all combinations can be done, it will take a lot of time. So, three principal factors have to be token into account.
+Fisrt of all a little study has been done in order to know in a better way which factors made a problem computational power hungry or not for ILP. A naive approach could be to say just the number of locations. But there are more factors that affects on the complexity of the problem. Since ILP is taking into account all the possible solutions and then get the best one, when you are providing to the ILP model an instance where almost all combinations can be done, it will take a lot of time. So, three principal factors have to be taken into account.
 
 \begin{itemize}
 	\item Number of locations. Of course, as more locations we have, more combinations of routes can be done.
@@ -555,9 +555,9 @@ Fisrt of all a little study has been done in order to know in a better way which
 	\item The distances between the cities. Also an obvious factor. As more scattered are the locations on the a bidimentional space, less jumps from one location to another can be done.
 \end{itemize}
 
-At plot \ref{img:time_vs_wsize} it can be seen the results for some experiments that are done in order to see the impact of the windows size. All these experiments are done with scattered distribution of locations. The conclusion is that when we have a little amount of cities, the windows size is not so important, but for bug amount of cities it affects a lot.
+At plot \ref{img:time_vs_wsize} it can be seen the results for some experiments that are done in order to see the impact of the windows size. All these experiments are done with scattered distribution of locations. The conclusion is that when we have a little amount of cities, the windows size is not so important, but for big amount of cities it affects a lot.
 
-Has been decided to do this little study, that just take some minutes thinking on the problem, in order to end up with scaled instances for perform the experiments. We want complex enough inputs but not so complex that could imply more time that we have. To do so, some modifications in the {\tt InstanceGenerator} have done. Now you can decide the number of locations, of course, but also the maximum window and if the cities will be scattered on a big space or in a little one. The big space implies that the starting locations will be at the middle and the other will be as maximim at 360 minutes from it. The small space implies that the start location is placed randomly and then the maximum distance between all locatios is 360 (just the minutes that we need to go and return assuming task of 0 minutes).
+Has been decided to do this little study, that just take some minutes thinking on the problem, in order to end up with scaled instances for perform the experiments. We want complex enough inputs but not so complex that could imply more time that we have. To do so, some modifications in the {\tt InstanceGenerator} have done. Now you can decide the number of locations, of course, but also the maximum window and if the cities will be scattered on a big space or in a little one. The big space implies that the starting locations will be at the middle and the other will be as maximum at 360 minutes from it. The small space implies that the start location is placed randomly and then the maximum distance between all locatios is 360 (just the minutes that we need to go and return assuming task of 0 minutes).
 
 \begin{figure}
 	\caption{Time spent by ILP for different problem size for windows time at max 350 and 500}
@@ -566,7 +566,7 @@ Has been decided to do this little study, that just take some minutes thinking o
 	\includegraphics[width=0.9\textwidth]{./imgs/ilp_wsize_aggregated.png}
 \end{figure}
 
-In conclusion a tradeoff between number of locations, windows size and how to distribute the locations must be done. Since this point all the instances used for the executions have been generated taked into account those factors.
+In conclusion a tradeoff between number of locations, windows size and how to distribute the locations must be done. All the instances used for the executions have been generated taked into account these factors.
 
 \section{Tuning $\alpha$ parameter for GRASP}\label{s:tuning_alpha}
 
@@ -690,13 +690,13 @@ Finnaly, the same appreciation like on the section above. It seems that the numb
 
 In this project has been developed an ILP model and two meta-heuriscs in order to find out the optimal paths for a fleet of vehicles taking into account time constraint.
 
-About the ILP has been really challenging to end up with a really simplified model that does not know anything about vehicles. This simplicity allows to model to work with two-dimensional matrix instead of three-dimensional ones that will imply more time resources for get the optimal value. Also an extra effort has been done for give it flexibility in terms on confire where the starting location is. And keeping on with the simplicity idea, this model enforce the generation of cycles without an explicit constraint. This is because some time constraint as has been explained. It was for free because the idea was to work on this constraint later.
+About the ILP has been really challenging to end up with a really simplified model that does not know anything about vehicles. This simplicity allows to model to work with two-dimensional matrix instead of three-dimensional ones that will imply more time resources for get the optimal value. Also an extra effort has been done for give it flexibility in terms of allow to configure where the starting location is instead of have a fixed one. And keeping on with the simplicity idea, this model enforce the generation of valid cycles without an explicit constraint. This is because some time constraint as has been explained.
 
 About meta-heuristics, has been also so challeging to end up with a reasonable greedy function, that is in fact the hearth of all applied metaheuriscis here.
 
-But the more challenging part has been to get a good inputs for the experiments. Has been so difficult because the complexity is not only a matter of number of locations but also another factors. The difficulty was because it can be generated two different instances with the same number of locations and one of them finalize at seconds and the other take ours until the computer run out of memory. Finally some good inputs has been picked by tunning the {\tt InstanceGenerator}.
+But the more challenging part has been to get a good inputs for the experiments. Has been so difficult because the complexity is not only a matter of number of locations but also another factors. The difficulty was because it can be generated two different instances with the same number of locations and one of them finalize at seconds and the other take hours until the computer run out of memory. Finally some good inputs has been picked by tunning the {\tt InstanceGenerator}.
 
-About the results they are so satisfactory because they are approximatelly as I was expecting. Anyway has been a surprise for me the power of the meta-heuristics. They can achieve a results really close to the optimal in a few minutes or even seconds while ILP is taking even hours. One commentary here for the executions of ILP. There are some situacions where it conversge very rapid to a less than 10\% but it is running for hours just for this 10\%. Maybe a more fine tunning of cplex in order to configure the minimum quality of results will save a lot of computational time. 
+About the results they are so satisfactory because they are approximatelly as I was expecting. Anyway has been a surprise for me the power of the meta-heuristics. They can achieve a results really close to the optimal in a few minutes or even seconds while ILP is taking even hours. One commentary here for the executions of ILP. There are some situations where it converge very rapid to a less than 10\% but it is running for hours just for this 10\%. Maybe a more fine tunning of cplex in order to configure the minimum quality of results will save a lot of computational time. 
 
 \section{Future work}
 
