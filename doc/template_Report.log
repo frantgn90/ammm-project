@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.10.3)  20 JAN 2017 00:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.10.3)  20 JAN 2017 20:43
 entering extended mode
 **./template_Report.tex
 (template_Report.tex
@@ -949,32 +949,31 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.99 T
-      his point of view allows to manage this problem without taking into ac...
-[1
+l.100 
+       [1
 
 ]pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has
  been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.144 	$$
+l.146 	$$
           [2]pdfTeX warning (ext4): destination with the same identifier (name{
 page.3}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.184 
-       [3]pdfTeX warning (ext4): destination with the same identifier (name{pag
-e.4}) has been already used, duplicate ignored
+l.186 \chapter
+              {ILP model}\label{ch:ilp_model} [3]
+Chapter 3.
+pdfTeX warning (ext4): destination with the same identifier (name{page.4}) has 
+been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.186 \chapter
-              {ILP model}\label{ch:ilp_model} [4]
-Chapter 3.
-[5
+l.214 
+       [4
 
-] [6] [7] [8] [9]
+] [5] [6] [7] [8]
 Chapter 4.
-[10
+[9
 
 ]
 Overfull \hbox (6.36705pt too wide) in paragraph at lines 360--393
@@ -998,7 +997,7 @@ Overfull \hbox (170.28386pt too wide) in paragraph at lines 395--419
 []$ 
  []
 
-[11]
+[10]
 Overfull \hbox (6.52998pt too wide) in paragraph at lines 421--459
 []\OT1/cmr/bx/n/10 Algorithm 4.1.3:| []\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 S; st
 rategy$\OT1/cmr/m/n/10 ) 
@@ -1020,7 +1019,7 @@ Overfull \hbox (203.50629pt too wide) in paragraph at lines 461--498
 []$ 
  []
 
-[12]
+[11]
 Overfull \hbox (40.69783pt too wide) in paragraph at lines 514--542
 []\OT1/cmr/bx/n/10 Algorithm 4.2.1:| []\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 chrom
 osome$\OT1/cmr/m/n/10 ) 
@@ -1031,11 +1030,11 @@ Overfull \hbox (115.01273pt too wide) in paragraph at lines 514--542
 []$ 
  []
 
-[13] [14]
+[12] [13]
 Chapter 5.
-[15
+[14
 
-] <./imgs/ilp_wsize_aggregated.png, id=343, 410.53375pt x 220.825pt>
+] <./imgs/ilp_wsize_aggregated.png, id=339, 410.53375pt x 220.825pt>
 File: ./imgs/ilp_wsize_aggregated.png Graphic file (type png)
 
 <use ./imgs/ilp_wsize_aggregated.png>
@@ -1055,49 +1054,49 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 (hyperref)                removing `math shift' on input line 571.
 
-<./imgs/grasp_alfa_comparisons.png, id=345, 436.12938pt x 245.91875pt>
+<./imgs/grasp_alfa_comparisons.png, id=341, 436.12938pt x 245.91875pt>
 File: ./imgs/grasp_alfa_comparisons.png Graphic file (type png)
 
 <use ./imgs/grasp_alfa_comparisons.png>
 Package pdftex.def Info: ./imgs/grasp_alfa_comparisons.png used on input line 5
 88.
 (pdftex.def)             Requested size: 389.23137pt x 219.47487pt.
- [16 <./imgs/ilp_wsize_aggregated.png>]
-[17 <./imgs/grasp_alfa_comparisons.png>]
-<./imgs/brkga_experiments.png, id=358, 435.12563pt x 243.40938pt>
+ [15 <./imgs/ilp_wsize_aggregated.png>]
+[16 <./imgs/grasp_alfa_comparisons.png>]
+<./imgs/brkga_experiments.png, id=354, 435.12563pt x 243.40938pt>
 File: ./imgs/brkga_experiments.png Graphic file (type png)
 
 <use ./imgs/brkga_experiments.png>
 Package pdftex.def Info: ./imgs/brkga_experiments.png used on input line 650.
 (pdftex.def)             Requested size: 389.23137pt x 217.74788pt.
- [18 <./imgs/brkga_experiments.png>]
-<./imgs/metaheuristic_quality_comparison.png, id=368, 349.80687pt x 179.67125pt
+ [17 <./imgs/brkga_experiments.png>]
+<./imgs/metaheuristic_quality_comparison.png, id=364, 370.38374pt x 157.58875pt
 >
 File: ./imgs/metaheuristic_quality_comparison.png Graphic file (type png)
  <use ./imgs/metaheuristic_quality_comparison.png>
 Package pdftex.def Info: ./imgs/metaheuristic_quality_comparison.png used on in
 put line 671.
-(pdftex.def)             Requested size: 389.23137pt x 199.93364pt.
+(pdftex.def)             Requested size: 389.23137pt x 165.6101pt.
 
-<./imgs/ilp_vs_metaheuristics_time_comparison.png, id=371, 364.86313pt x 181.67
+<./imgs/ilp_vs_metaheuristics_time_comparison.png, id=367, 364.86313pt x 181.67
 876pt>
 File: ./imgs/ilp_vs_metaheuristics_time_comparison.png Graphic file (type png)
  <use ./imgs/ilp_vs_metaheuristics_time_comparison.png>
 Package pdftex.def Info: ./imgs/ilp_vs_metaheuristics_time_comparison.png used 
 on input line 686.
 (pdftex.def)             Requested size: 389.23137pt x 193.82048pt.
- [19 <./imgs/metaheuristic_quality_comparison.png>] [20 <./imgs/ilp_vs_metaheur
+ [18 <./imgs/metaheuristic_quality_comparison.png>] [19 <./imgs/ilp_vs_metaheur
 istics_time_comparison.png>]
 Chapter 6.
-[21
+[20
 
 ]
 Appendix A.
-[22
+[21
 
 ]
 Appendix B.
-<./imgs/result_visualizer_example_1.png, id=391, 370.38374pt x 370.38374pt>
+<./imgs/result_visualizer_example_1.png, id=387, 370.38374pt x 370.38374pt>
 File: ./imgs/result_visualizer_example_1.png Graphic file (type png)
 
 <use ./imgs/result_visualizer_example_1.png>
@@ -1105,7 +1104,7 @@ Package pdftex.def Info: ./imgs/result_visualizer_example_1.png used on input l
 ine 738.
 (pdftex.def)             Requested size: 129.74599pt x 129.74362pt.
 
-<./imgs/result_visualizer_example_2.png, id=392, 370.88562pt x 369.88188pt>
+<./imgs/result_visualizer_example_2.png, id=388, 370.88562pt x 369.88188pt>
 File: ./imgs/result_visualizer_example_2.png Graphic file (type png)
 
 <use ./imgs/result_visualizer_example_2.png>
@@ -1113,7 +1112,7 @@ Package pdftex.def Info: ./imgs/result_visualizer_example_2.png used on input l
 ine 739.
 (pdftex.def)             Requested size: 129.74599pt x 129.39287pt.
 
-<./imgs/result_visualizer_example_3.png, id=393, 371.88937pt x 371.3875pt>
+<./imgs/result_visualizer_example_3.png, id=389, 371.88937pt x 371.3875pt>
 File: ./imgs/result_visualizer_example_3.png Graphic file (type png)
 
 <use ./imgs/result_visualizer_example_3.png>
@@ -1121,7 +1120,7 @@ Package pdftex.def Info: ./imgs/result_visualizer_example_3.png used on input l
 ine 740.
 (pdftex.def)             Requested size: 129.74599pt x 129.57388pt.
 
-<./imgs/result_visualizer_example_4.png, id=394, 371.3875pt x 371.88937pt>
+<./imgs/result_visualizer_example_4.png, id=390, 371.3875pt x 371.88937pt>
 File: ./imgs/result_visualizer_example_4.png Graphic file (type png)
 
 <use ./imgs/result_visualizer_example_4.png>
@@ -1129,7 +1128,7 @@ Package pdftex.def Info: ./imgs/result_visualizer_example_4.png used on input l
 ine 741.
 (pdftex.def)             Requested size: 129.74599pt x 129.9249pt.
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 746.
- [23
+ [22
 
  <./imgs/result_visualizer_example_1.png> <./imgs/result_visualizer_example_2.p
 ng> <./imgs/result_visualizer_example_3.png> <./imgs/result_visualizer_example_
@@ -1142,9 +1141,9 @@ Package rerunfilecheck Info: File `template_Report.out' has not changed.
 (rerunfilecheck)             Checksum: 1573B2D605F82C62D556F1F341EF6494;2362.
  ) 
 Here is how much of TeX's memory you used:
- 19163 strings out of 493334
- 349215 string characters out of 3136672
- 474990 words of memory out of 3000000
+ 19162 strings out of 493334
+ 349208 string characters out of 3136672
+ 474988 words of memory out of 3000000
  22355 multiletter control sequences out of 15000+200000
  14033 words of font info for 55 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1172,9 +1171,9 @@ ic/amsfonts/cm/cmti10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public
 /amsfonts/cm/cmtt10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/a
 msfonts/cm/cmtt12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/ams
 fonts/symbols/msbm10.pfb>
-Output written on template_Report.pdf (28 pages, 1509507 bytes).
+Output written on template_Report.pdf (27 pages, 1507060 bytes).
 PDF statistics:
- 495 PDF objects out of 1000 (max. 8388607)
- 90 named destinations out of 1000 (max. 500000)
+ 491 PDF objects out of 1000 (max. 8388607)
+ 89 named destinations out of 1000 (max. 500000)
  331 words of extra memory for PDF output out of 10000 (max. 10000000)
 
