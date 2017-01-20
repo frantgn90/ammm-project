@@ -8,9 +8,12 @@ from Solver_GRASP import Solver_GRASP
 from Solver_BRKGA import Solver_BRKGA
 from Solution import Solution
 
-LS_NB="reassignement" # ""  exchange
-LS_ST="best-improvement" # "first-improvement"
 LS_ALFA=0.3
+
+LS_NB="reassignement" #      exchange
+LS_ST="best-improvement" # "first-improvement"
+
+GRASP_ITERATIONS=3
 
 def main(argc, argv):
     def Usage(cmd):
@@ -19,7 +22,7 @@ def main(argc, argv):
         exit(1)
 
     if argc < 3: Usage(" ".join(argv))
-
+    
     heuristic = argv[1]
     if argc == 4:
         LS_ALFA=float(argv[2])
@@ -31,20 +34,35 @@ def main(argc, argv):
     #problem.print_test()
     
     if heuristic == "GRASP":
-        grasp=Solver_GRASP(problem)
-        grasp.Solve(LS_ALFA)
-        if grasp.isFeasible():
+
+        bestQuality = float("inf")
+        bestSolution = None
+        for i in range(GRASP_ITERATIONS):
+            grasp=Solver_GRASP(problem)
+            grasp.Solve(0.25)
+            if not grasp.isFeasible():
+                print("GRASP: Solution not feasible")
+                exit(0)
+            
             grasp.doLocalSearch(LS_NB, LS_ST)
-            print grasp.printSolution()
-        else:
-            print("GRASP: Solution not feasible")
-            exit(0)
+                
+            print "ITERATION {0}: {1}".format(i, grasp.solution.getQuality())
+            if grasp.solution.getQuality() < bestQuality:
+                bestQuality = grasp.solution.getQuality()
+                bestSolution = grasp.solution
+                
+        print "GRASP DONE"
+        print "=========="
+        print "Quality: {0}".format(grasp.solution.getQuality())
 
     elif heuristic == "BRKGA":
         brkga=Solver_BRKGA(problem)
         brkga.Solve()
         if brkga.isFeasible():
-            print brkga.printSolution()
+            #print brkga.printSolution()
+            print "BRKGA DONE"
+            print "=========="
+            print "Quality: {0}".format(brkga.bestSolution.getQuality())
         else:
             print("BRKGA: Solution not feasible")
             exit(0)

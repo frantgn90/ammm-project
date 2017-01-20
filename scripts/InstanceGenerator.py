@@ -127,6 +127,7 @@ def main(argc, argv):
         poscities = generatePoints(ncities, 2*SPACE_DIM)
         distances = calculeDistances2(ncities, poscities, stLocation)
     else:
+        #SPACE_DIM=math.sqrt( (MAX_DISTANC/2)**2/ncities)
         poscities = generatePoints(ncities, SPACE_DIM)
         distances = calculeDistances(ncities, poscities)
         
@@ -163,7 +164,7 @@ def main(argc, argv):
     outfile.write(";\nminW="); pp.pprint(minW)
     outfile.write(";\nmaxW="); pp.pprint(maxW)
     outfile.write(";")
-    outfile.write("// Mean windows sizes: {0}".format(windows_mean))
+    #outfile.write("// Mean windows sizes: {0}".format(windows_mean))
     
     print ("{0} input file has been generated.".format(filename))
 

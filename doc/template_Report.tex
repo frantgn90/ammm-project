@@ -17,6 +17,9 @@
 \usepackage{pseudocode}
 
 \usepackage{booktabs}
+\usepackage{subfigure}
+
+\usepackage[titletoc]{appendix}
 
 %Options: Sonny, Lenny, Glenn, Conny, Rejne, Bjarne, Bjornstrup
 \usepackage[Rejne]{fncychap}
@@ -37,6 +40,7 @@
 }
 
 \usepackage[a4paper,left=2.9cm,right=2.9cm,top=3cm,bottom=2.5cm,headheight=110pt]{geometry}
+
 
 % Title Page
 \title{{\Huge Route optimization for a fleet of vehicles with temporal constraints} \\
@@ -66,10 +70,10 @@ Master in Research and Innovation}
 \chapter{Introduction}
 	Optimization problems can appear in almost all situations on life. There are specially important those ones that appears on the industry because if we can achieve an optimal solution, we will improve the efficiency of the industrial process and then get lower manufacturing cost. This improvement of the costs have an effect on the competitiveness of the companies and on the final quality of their products. The challeging part is that those kind of problem have a really high computational complexity therefore there are several methods to face with them. By one hand we have the, let's say, always-optimality methods that obtain the optimal solution but without taking into account the huge amount of time that it could imply. e.g. ILP\footnote{Integer Linear Programming}. By the other hand we have those methods that concerns about the execution time and are looking for a tradeof between the exeution time and the quality of the solution\footnote{The distance to the optimal}.
 	
-	In this project has been developed an Integer Linear Programming model in order to optimize the routes for a fleet of vehicles with temporal constraints derived from the distance between locations and from the tasks that has to be done for every location. Also have been developed different meta-heuristic strategies in order to get results more efficiently in terms of exeuction time even if there are not the optimal but close enough. Finnaly comparissons in term of execution time and solution quality have been done. 
+	In this project has been developed an Integer Linear Programming model in order to optimize the routes for a fleet of vehicles with temporal constraints derived from the distance between locations and from the tasks that has to be done for every location. Also have been developed different meta-heuristic strategies in order to get results more efficiently in terms of exeuction time even if there are not the optimal but close enough. Finnaly comparisons in term of execution time and solution quality have been done. 
 	
 \section{Document structure}
-	The structure of this document is the following: The problem definition is done in chapter \ref{ch:problem_definition}. Here it is explained the problem that is faced, which constraints is needed to take into account and what we want to optimize. At chapter \ref{ch:ilp_model} is explained the mathematical model that has been developed, i.e. the decission variables and also the constraints with a mathematical nomenclature. After this chapter, at chapter \ref{ch:meta_heuristics} is explained how it has been used the heuristics approach in order to face with the problem, two meta-heuristics has been used: GRASP\footnote{Greedy Adaptative Search Procedure} and BRKGA\footnote{Biased Random-Key Genetic Algorithm}. After perform several executions for those approaches, a comparisson in terms of time and quality of the result is done at chapter \ref{ch:comparisson}. Finnally conclusions of the project are explained at chapter \ref{ch:conclusions}
+	The structure of this document is the following: The problem definition is done in chapter \ref{ch:problem_definition}. Here it is explained the problem that is faced, which constraints is needed to take into account and what we want to optimize. At chapter \ref{ch:ilp_model} is explained the mathematical model that has been developed, i.e. the decission variables and also the constraints with a mathematical nomenclature. After this chapter, at chapter \ref{ch:meta_heuristics} is explained how it has been used the heuristics approach in order to face with the problem, two meta-heuristics has been used: GRASP\footnote{Greedy Adaptative Search Procedure} and BRKGA\footnote{Biased Random-Key Genetic Algorithm}. After perform several executions for those approaches, a comparison in terms of time and quality of the result is done at chapter \ref{ch:comparison}. Finnally conclusions of the project are explained at chapter \ref{ch:conclusions}
 \end{abstract}
 
 \chapter{Problem definition}\label{ch:problem_definition}
@@ -253,6 +257,7 @@ This constraints are the ILP version of the constraints defined at section \ref{
 	
 	% TODO: Mirar si es posible simplificar esta constraint para que solo se garantice
 	% TODO: que el numero de ingoing edges y outgoing edges sea igual en la starting location
+	% DONE: No se puede. Si se cambia no funciona nada.
 	
 	\item From the previous constraint, we can ensure that every location just will have one ingoing edges but we are not ensuring anything about the outgoing edges. For cycles we want to ensure that there is only one outgoing edge for all location except for the starting one, that must be same outgoing edges as ingoing ones. Then, the sumation of outgoing edges must be equal as the ingoing edges for all locations.
 	$$\sum\limits_{j \in V} tracked_{i,j} = \sum\limits_{k \in V} tracked_{k,i} \quad \forall i \in V $$
@@ -260,8 +265,9 @@ This constraints are the ILP version of the constraints defined at section \ref{
 
 	% TODO: Mirar si esta constraint se podria quitar. El hecho de que todos los ciclos
 	% TODO: tengan que implicar la startlocation deberia ser suficiente
+	% DONE: No es necesaria y de hecho mejoramos el tiempo de ILP si la eliminamos
 	
-	\item One desirable constraint is that we want to avoid the cycles that just imply one location. The point for this constraint is that we are enforcing 0 on the diagonal of the tracked matrix. 
+	\item One desirable constraint is that we want to avoid the cycles that just imply one location. The point for this constraint is that we are enforcing 0 on the diagonal of the tracked matrix. As we will see later, since we are enforcing that all cycles must imply the startLocation, this constraint is not needed at all.
 
 	$$ \sum\limits_{i \in V} tracked_{i,i} = 0 $$
 	$$ $$
@@ -333,7 +339,7 @@ You can see the constructive phase into two pseudo-codes. The constructive phase
 
 The essential idea is that a vehicle is moving through locations one after the other until it can not go to the next one because the time restriction. In this case, it returns to the $l_{s}$. Notice that at candidate generation is checked if moving to this next location there is a possibility to return to $l_{s}$, if not it is not considered a candidate.
 
-\subsection{Local search}
+\subsection{Local search}\label{ss:local_search}
 The other part that will be shown is about the local search. Once the constructive phase ends up with a solution, eventually it is the optimal, but usually it is not. In order to improve the solution a neighbourhoods of the constructive phase solution, i.e. near solutions will be searched. This phase is called local search. Two neighbourhoods have been developed. The exchange and the reassignement. You can see the first one at pseudocode \ref{pc:exchange_neighbourhood} and the second one pseudocode \ref{pc:reassignement_neighbourhood}.
 
 \subsubsection{Exchange neighbourhood}
@@ -535,9 +541,32 @@ You can see the pseudocode of decoder at \ref{pc:brkga_decoder}
 	\RETURN S
 \end{pseudocode}
 
-\chapter{Tunning and Comparissons}\label{ch:comparisson}
+\chapter{Tunning and Comparisons}\label{ch:comparison}
 
-There are some interesting comparissons that can be do, not just compare ILP with meta-heuristics solutions. An interesting studies are for try to tune accuratelly the meta-heuristics parameteres. In this chapter you will see how those parameteres are tuned through an empirical reasoning. An study of the $\alpha$ value for GRASP is done at section \ref{s:tuning_alpha}. More parameters have to be taken into account for BRKGA, that are: percentage of elites, percentage of mutants, number of individuals, percentage on inheritage and number of generations. In this case some simplications have done in order to fulfil with the deadline. You can see this study at section \ref{s:tuning_brkga_params}. Finally, at section \ref{s:comparisson} a comparisson between ILP and meta-heuristics is done.
+There are some interesting comparisons that can be do, not just compare ILP with meta-heuristics solutions. An interesting studies are for try to tune accuratelly the meta-heuristics parameteres. In this chapter you will see how those parameteres are tuned through an empirical reasoning. An study of the $\alpha$ value for GRASP is done at section \ref{s:tuning_alpha}. More parameters have to be taken into account for BRKGA, that are: percentage of elites, percentage of mutants, number of individuals, percentage on inheritage and number of generations. In this case some simplications have done in order to fulfil with the deadline. You can see this study at section \ref{s:tuning_brkga_params}. Finally, at section \ref{s:comparison} a comparison between ILP and meta-heuristics is done.
+
+\section{Instances complexity factors}\label{s:complexity_factors}
+
+Fisrt of all a little study has been done in order to know in a better way which factors made a problem, computational power hungry or not for ILP. A naive approach could be to say just the number of locations. But there are more factors that affects on the complexity of the problem. Since ILP is taking into account all the possible solutions and then get the best one, when you are providing to the ILP model an instance where almost all combinations can be done, it will take a lot of time. So, three principal factors have to be token into account.
+
+\begin{itemize}
+	\item Number of locations. Of course, as more locations we have, more combinations of routes can be done.
+	\item The size of the time window. The time window is a good tool in order to prune options for routes. As more big is the windows of the locations more posibilities to move from one location to another the model has. As more little one, less posibilities to move.
+	\item The distances between the cities. Also an obvious factor. As more scattered are the locations on the a bidimentional space, less jumps from one location to another can be done.
+\end{itemize}
+
+At plot \ref{img:time_vs_wsize} it can be seen the results for some experiments that are done in order to see the impact of the windows size. All these experiments are done with scattered distribution of locations. The conclusion is that when we have a little amount of cities, the windows size is not so important, but for bug amount of cities it affects a lot.
+
+Has been decided to do this little study, that just take some minutes thinking on the problem, in order to end up with scaled instances for perform the experiments. We want complex enough inputs but not so complex that could imply more time that we have. To do so, some modifications in the {\tt InstanceGenerator} have done. Now you can decide the number of locations, of course, but also the maximum window and if the cities will be scattered on a big space or in a little one. The big space implies that the starting locations will be at the middle and the other will be as maximim at 360 minutes from it. The small space implies that the start location is placed randomly and then the maximum distance between all locatios is 360 (just the minutes that we need to go and return assuming task of 0 minutes).
+
+\begin{figure}
+	\caption{Time spent by ILP for different problem size for windows time at max 350 and 500}
+	\label{img:time_vs_wsize}
+	\centering
+	\includegraphics[width=0.9\textwidth]{./imgs/ilp_wsize_aggregated.png}
+\end{figure}
+
+In conclusion a tradeoff between number of locations, windows size and how to distribute the locations must be done. Since this point all the instances used for the executions have been generated taked into account those factors.
 
 \section{Tuning $\alpha$ parameter for GRASP}\label{s:tuning_alpha}
 
@@ -556,7 +585,7 @@ One interesting fact that also can be seen on the plot is that as we are increme
 	\caption{Evolution of quality of solution changing $\alpha$ parameter.}
 	\label{img:grasp_alfa}
 	\centering
-	\includegraphics[width=0.75\textwidth]{./imgs/grasp_alfa_comparissons}
+	\includegraphics[width=0.9\textwidth]{./imgs/grasp_alfa_comparisons}
 \end{figure}
 
 
@@ -565,18 +594,153 @@ One interesting fact that also can be seen on the plot is that as we are increme
 
 For BRKGA the tuning is a little bit more difficult than for GRASP. Here we have five parameters to tune.
 \begin{itemize}
-	\item Number of individuals in a poblation.
-	\item Percentage of the poblation that becomes elite.
-	\item Percentage of poblation to generate as mutants.
-	\item Boundary value that decides if a gene is get from elite or from a normal individual on the crossover.
-	\item And finally the number of generation that we want to evolve.
+	\item $nIndividuals$ Number of individuals in a poblation.
+	\item $pElites$ Percentage of the poblation that becomes elite.
+	\item $pMutants$ Percentage of poblation to generate as mutants.
+	\item $pInheritanceElite$ Boundary value that decides if a gene is get from elite or from a normal individual on the crossover.
+	\item $maxGenerations$ And finally the number of generation that we want to evolve.
 \end{itemize}
 
-In order to fulfil with the deadline of the project all the needed experiments are not done but just a little subset of them. It has been defined four different sets of parameters and every set has been executed over the same instances like the experiments for the GRASP at section \ref{s:tuning_alpha}.
+In order to fulfil with the deadline of the project all the needed experiments are not done but just a little subset of them. It has been defined three different sets of parameters and every set has been executed over the same instances like the experiments for the GRASP at section \ref{s:tuning_alpha} from 10 to 50 locations.
 
-\section{Comparisson: ILP vs meta-heuristics}\label{s:comparisson}
+Those four sets are:
+\begin{itemize}
+	\item Let's start with the configuration provided by default with the meta-heuristics framework. This configuration is: 
+	\begin{itemize}
+		\item $nIndividuals=nLocations/2$
+		\item $pElites=0.2$
+		\item $pMutants=0.15$
+		\item $pInheritanceElite=0.7$
+		\item $maxGenerations=3$
+	\end{itemize}
+	\item Now let's try incrementing the number of individuals. This experiment is trying the exploit the generation of mutants in order to leave of local optimals.
+	\begin{itemize}
+		\item $nIndividuals=nLocations$
+		\item $pElites=0.2$
+		\item $pMutants=0.15$
+		\item $pInheritanceElite=0.7$
+		\item $maxGenerations=3$
+	\end{itemize}
+	
+	\item In this experiment is almost equal the previous one but doubling the number of elite individuals. 
+	\begin{itemize}
+		\item $nIndividuals=nLocations$
+		\item $pElites=0.4$
+		\item $pMutants=0.15$
+		\item $pInheritanceElite=0.7$
+		\item $maxGenerations=3$
+	\end{itemize}
 
+	\item  In this experiment is almost equal the previous one but doubling the number of elite mutants. 
+	\begin{itemize}
+		\item $nIndividuals=nLocations$
+		\item $pElites=0.2$
+		\item $pMutants=0.3$
+		\item $pInheritanceElite=0.7$
+		\item $maxGenerations=3$
+	\end{itemize}
+\end{itemize}
+
+As you can see at figure \ref{img:brkga_experiments} the quality of the solutions are not changing at all. Only for the last input of 50 locations. Then we will use the first experiment parameters. The fact that there are not so many changes with the different parameters also could imply that the inputs are really constrained and encourage us to keep developing the {\tt InstanceGenerator} for try to relax a little bit more the inputs.
+
+\begin{figure}
+	\caption{Evolution of quality of solution for different experiments.}
+	\label{img:brkga_experiments}
+	\centering
+	\includegraphics[width=0.9\textwidth]{./imgs/brkga_experiments}
+\end{figure}
+
+\section{Comparison: ILP vs meta-heuristics}\label{s:comparison}
+
+Now, a comparison in terms of time and quality of the result will be showed up. The quality of a result is the distance to the optimum. Taking into account that the solution of ILP is always the optimum, just have been calculated the quality for the two metaheuristics.
+
+The tricky part in order to do this comparison has been pick the correct instances. As it has been explained at section \ref{s:complexity_factors} get the correct instances is not just a matter of move over the different intances sizes in terms of number of locations. Because the randomness of the instance generation is difficult to get the perfect input for the experiment that you want to do even if you are controlling all the explained factors.
+
+The used instances have been instances that have an increasing time in ILP. This is just to see what is the evolution of execution times of meta-heuristics and also the evolution of the quality of the solutions since the end of this section is to make comparisons, not denote the evolution of times vs. input sizes. Is because that you will see that the instances on the x axys are unsorted in terms of number of locations.
+
+\subsection{Quality comparison}
+
+At figure \ref{img:metaheuristics_quality_comparison} you can see the plot with the qualities of the solutions for four different instances. As is just said, the instances are not sorted by the number of locations but by the time spent in ILP because is considered that this time is a clear indicative for the complexity of the instance of the problem. Looking at the quality, it seems that as more number of locations we have, more further from the optimality the meta-heuristics are and this is the expected phenomena. Also another appreciation arise. Those values are saying us, at least for the different version for GRASP, that the complexity of an instance from the point of view of it is clearly correlated with the number of locations and it is saying that in fact its possible that the instances complexity factors described at section \ref{s:complexity_factors} are not aplying completely to meta-heuristics.
+
+So, the conclusions for this comparison is that in general BRKGA is behaving better than GRASP. And for the different versions of GRASP, the best is GRASP+Reassignement. This is also as we are expecting because as has been explained at secion \ref{ss:local_search} scan on reassignement neighbourhood can end up a better solution by removing one vehicle. For the exchange neighbourhood this kind of improvement is not expected but just an improvement in terms of a better arrival time.
+
+\begin{figure}
+	\caption{Comparison in terms of quality of the different applied meta-heuristics.}
+	\label{img:metaheuristics_quality_comparison}
+	\centering
+	\includegraphics[width=0.9\textwidth]{./imgs/metaheuristic_quality_comparison.png}
+\end{figure}
+
+\subsection{Time comparison}
+
+At figure \ref{img:ilp_metaheuristics_comparison} you can see the plot with the comparisons of execution times. Be careful for a fast conclusion just looking for lines, take into account that the y-axys is in a logarithmic scale. You can see, as was expected that ILP is the clear defeated because looking at figure \ref{img:metaheuristics_quality_comparison}, those times are not justified. The quality of the solutions are not so distant, so the efficiency (let's say $\frac{quality}{needed resources}$) of ILP, at least in these experiments is clearly below the efficiency of meta-heuristics.
+
+About the meta-heuristics there are some things to mention. All the versions are paying the better quality with execution time. In fact the order is inverse than the order of the best meta-heuristic for quality. The differencies between GRASP+Exchange and GRASP+Reassign can be explained because the size of the neighbourhood that every one is scanning. Of course, the reassignement one is more bigger than the other.
+
+Finnaly, the same appreciation like on the section above. It seems that the number of locations are strong correlated with the needed resources for meta-heuristics but not for ILP.
+
+\begin{figure}
+	\caption{ILP vs Meta-heuristics times comparison}
+	\label{img:ilp_metaheuristics_comparison}
+	\centering
+	\includegraphics[width=0.9\textwidth]{./imgs/ilp_vs_metaheuristics_time_comparison.png}
+\end{figure}
 
 \chapter{Conclusions}\label{ch:conclusions}
+
+In this project has been developed an ILP model and two meta-heuriscs in order to find out the optimal paths for a fleet of vehicles taking into account time constraint.
+
+About the ILP has been really challenging to end up with a really simplified model that does not know anything about vehicles. This simplicity allows to model to work with two-dimensional matrix instead of three-dimensional ones that will imply more time resources for get the optimal value. Also an extra effort has been done for give it flexibility in terms on confire where the starting location is. And keeping on with the simplicity idea, this model enforce the generation of cycles without an explicit constraint. This is because some time constraint as has been explained. It was for free because the idea was to work on this constraint later.
+
+About meta-heuristics, has been also so challeging to end up with a reasonable greedy function, that is in fact the hearth of all applied metaheuriscis here.
+
+But the more challenging part has been to get a good inputs for the experiments. Has been so difficult because the complexity is not only a matter of number of locations but also another factors. The difficulty was because it can be generated two different instances with the same number of locations and one of them finalize at seconds and the other take ours until the computer run out of memory. Finally some good inputs has been picked by tunning the {\tt InstanceGenerator}.
+
+About the results they are so satisfactory because they are approximatelly as I was expecting. Anyway has been a surprise for me the power of the meta-heuristics. They can achieve a results really close to the optimal in a few minutes or even seconds while ILP is taking even hours. One commentary here for the executions of ILP. There are some situacions where it conversge very rapid to a less than 10\% but it is running for hours just for this 10\%. Maybe a more fine tunning of cplex in order to configure the minimum quality of results will save a lot of computational time. 
+
+\section{Future work}
+
+More studies in order to get the optimal parameters for the meta-heuristics have to be done. Also one limitation of the experiments done in this project is that all the instances are generated with synthetic data, it means that of course they are biased by the nature of the generator. So it could be interesting to work with real data.
+
+\newpage
+
+\begin{appendices}
+	\chapter{Instance generator}
+	For testing the ILP model and the meta-heuristics and perform the experiments an instance generator has been done. This instance generator allows us to generate feasible inputs. You will see the input generator script in attached with this report.
+	
+	The usage of the script is:
+	\begin{center}
+		{\tt python ./InstaceGenerator.py <nlocations> <maxwinsize> <SCAT | GATH>}
+	\end{center}
+	
+	The different parameters are:
+	\begin{itemize}
+		\item {\tt nlocations}: For sure, the number of locations that you want on the instance.
+		\item {\tt maxwinsize}: The maximum sizes of the time windows. It means that the size of the windows of all locations will be set randomly from 1 to this number.
+		\item {\tt <SCAT | GATH>}: You must choice between scattered distribution or gathered. For scattered the nlocations-1 locations will be dispersed over a bidimensional are where the distance from the center to one corner is exactly $720/2$. Since the startLocations will be on the center of the area, there is ensuring that all distributions will end up with a feasible solution because always a vehicle can travel from startLocation to the most remote location. For the gathered distribution the distance of the diagonal is $720/2$ and all locations are distributed randomly. It means that the maximum distance between two locations will be 360.
+	\end{itemize}
+	
+	Finally, the script will generate an instance with the name:
+	\begin{center}
+		{\tt instance\_<nlocations>\_<random\_seed>.dat}
+	\end{center}
+	
+	\chapter{Result visualizer}
+	
+	As an extra work, a basic visualizer has been developed. It shows the results by reading the output of ILP (previously saved on a file). The representation of the result is with directed graph and also can be seen the arrival time for every locations. To see the graphical representation of a solution you must execute:
+	\begin{center}
+		{\tt python ./ResultVisualizer.py <file\_with\_dumped\_result.txt>}
+	\end{center}
+	There are some examples below:
+	
+	\begin{figure}[h]
+		\centering
+		\subfigure[Example 1]{\includegraphics[width=0.30\textwidth]{./imgs/result_visualizer_example_1.png}}\hspace{15mm}
+		\subfigure[Example 2]{\includegraphics[width=0.30\textwidth]{./imgs/result_visualizer_example_2.png}}\vspace{5mm}
+		\subfigure[Example 3]{\includegraphics[width=0.30\textwidth]{./imgs/result_visualizer_example_3.png}}\hspace{15mm}
+		\subfigure[Example 4]{\includegraphics[width=0.30\textwidth]{./imgs/result_visualizer_example_4.png}}
+	\end{figure}
+\end{appendices}
+	
 
 \end{document}          

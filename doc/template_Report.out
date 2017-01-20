@@ -22,8 +22,14 @@
 \BOOKMARK [1][-]{section.4.2}{BRKGA implementation}{chapter.4}% 22
 \BOOKMARK [2][-]{subsection.4.2.1}{Chromosome structure}{section.4.2}% 23
 \BOOKMARK [2][-]{subsection.4.2.2}{Decoder}{section.4.2}% 24
-\BOOKMARK [0][-]{chapter.5}{Tunning and Comparissons}{}% 25
-\BOOKMARK [1][-]{section.5.1}{Tuning \040parameter for GRASP}{chapter.5}% 26
-\BOOKMARK [1][-]{section.5.2}{Tuning BRKGA parameters}{chapter.5}% 27
-\BOOKMARK [1][-]{section.5.3}{Comparisson: ILP vs meta-heuristics}{chapter.5}% 28
-\BOOKMARK [0][-]{chapter.6}{Conclusions}{}% 29
+\BOOKMARK [0][-]{chapter.5}{Tunning and Comparisons}{}% 25
+\BOOKMARK [1][-]{section.5.1}{Instances complexity factors}{chapter.5}% 26
+\BOOKMARK [1][-]{section.5.2}{Tuning \040parameter for GRASP}{chapter.5}% 27
+\BOOKMARK [1][-]{section.5.3}{Tuning BRKGA parameters}{chapter.5}% 28
+\BOOKMARK [1][-]{section.5.4}{Comparison: ILP vs meta-heuristics}{chapter.5}% 29
+\BOOKMARK [2][-]{subsection.5.4.1}{Quality comparison}{section.5.4}% 30
+\BOOKMARK [2][-]{subsection.5.4.2}{Time comparison}{section.5.4}% 31
+\BOOKMARK [0][-]{chapter.6}{Conclusions}{}% 32
+\BOOKMARK [1][-]{section.6.1}{Future work}{chapter.6}% 33
+\BOOKMARK [0][-]{Appendix.1.A}{Appendix Instance generator}{}% 34
+\BOOKMARK [0][-]{Appendix.1.B}{Appendix Result visualizer}{}% 35

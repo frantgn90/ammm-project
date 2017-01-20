@@ -73,13 +73,9 @@ subject to {
 	}
 	
 	// If the truck is in a city it can not get track to the same city (loop).
-	forall(n in N) {
-		tracked[n,n] == 0;	
-	}
-
-	// TODO: We have to ensure that all cycles in the graph must involve
-	// the startLocation node.
-	// NOTE: Check out the TSP.
+	////forall(n in N) {
+	////	tracked[n,n] == 0;	
+	////}
 
 	/* TIME CONSTRAINTS */
 	
@@ -123,9 +119,6 @@ subject to {
 	
 	// All work should be done from 8 a.m. to 8 p.m., i.e. in 12 hours
 	lastDone <= 12*60;
-	
-	// Los arriving time del siguiente nodo ha de ser mayot que el del anterior
-	// excepto para el camino de vuelta a ls. No sé si hace falta.
 }
 
 

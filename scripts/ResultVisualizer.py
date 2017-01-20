@@ -11,7 +11,7 @@ import math
 import tkinter as tk
 import random
 
-startLocation=4
+startLocation=-1
 
 WSIZE=750
 RADIUS=WSIZE/2-50

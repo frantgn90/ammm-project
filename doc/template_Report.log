@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.10.3)  19 JAN 2017 13:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.10.3)  20 JAN 2017 00:58
 entering extended mode
 **./template_Report.tex
 (template_Report.tex
@@ -745,29 +745,55 @@ Package: booktabs 2005/04/14 v1.61803 publication quality tables
 \@lastruleclass=\count267
 \@thisrulewidth=\dimen267
 )
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\subfigure\subfigure.sty"
+Package: subfigure 2002/07/30 v2.1.4 subfigure package
+\subfigtopskip=\skip70
+\subfigcapskip=\skip71
+\subfigcaptopadj=\dimen268
+\subfigbottomskip=\skip72
+\subfigcapmargin=\dimen269
+\subfiglabelskip=\skip73
+\c@subfigure=\count268
+\c@lofdepth=\count269
+\c@subtable=\count270
+\c@lotdepth=\count271
+
+****************************************
+* Local config file subfigure.cfg used *
+****************************************
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\subfigure\subfigure.cfg")
+\subfig@top=\skip74
+\subfig@bottom=\skip75
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\appendix\appendix.sty"
+Package: appendix 2009/09/02 v1.2b extra appendix facilities
+\c@@pps=\count272
+\c@@ppsavesec=\count273
+\c@@ppsaveapp=\count274
+)
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\fncychap\fncychap.sty"
 Package: fncychap 2007/07/30 v1.34 LaTeX package (Revised chapters)
-\RW=\skip70
-\mylen=\skip71
-\myhi=\skip72
-\px=\skip73
-\py=\skip74
-\pyy=\skip75
-\pxx=\skip76
+\RW=\skip76
+\mylen=\skip77
+\myhi=\skip78
+\px=\skip79
+\py=\skip80
+\pyy=\skip81
+\pxx=\skip82
 )
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\geometry\geometry.sty"
 Package: geometry 2010/09/12 v5.6 Page Geometry
-\Gm@cnth=\count268
-\Gm@cntv=\count269
-\c@Gm@tempcnt=\count270
-\Gm@bindingoffset=\dimen268
-\Gm@wd@mp=\dimen269
-\Gm@odd@mp=\dimen270
-\Gm@even@mp=\dimen271
-\Gm@layoutwidth=\dimen272
-\Gm@layoutheight=\dimen273
-\Gm@layouthoffset=\dimen274
-\Gm@layoutvoffset=\dimen275
+\Gm@cnth=\count275
+\Gm@cntv=\count276
+\c@Gm@tempcnt=\count277
+\Gm@bindingoffset=\dimen270
+\Gm@wd@mp=\dimen271
+\Gm@odd@mp=\dimen272
+\Gm@even@mp=\dimen273
+\Gm@layoutwidth=\dimen274
+\Gm@layoutheight=\dimen275
+\Gm@layouthoffset=\dimen276
+\Gm@layoutvoffset=\dimen277
 \Gm@dimlist=\toks34
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\geometry\geometry.cfg"))
@@ -780,48 +806,48 @@ runsystem(del template_Report.aex)...executed.
 (template_Report.aux)
 \openout1 = `template_Report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 53.
-LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count271
-\scratchdimen=\dimen276
+\scratchcounter=\count278
+\scratchdimen=\dimen278
 \scratchbox=\box84
-\nofMPsegments=\count272
-\nofMParguments=\count273
+\nofMPsegments=\count279
+\nofMParguments=\count280
 \everyMPshowfont=\toks35
-\MPscratchCnt=\count274
-\MPscratchDim=\dimen277
-\MPnumerator=\count275
-\makeMPintoPDFobject=\count276
+\MPscratchCnt=\count281
+\MPscratchDim=\dimen279
+\MPnumerator=\count282
+\makeMPintoPDFobject=\count283
 \everyMPtoPDFconversion=\toks36
 )
 \AtBeginShipoutBox=\box85
-Package hyperref Info: Link coloring OFF on input line 53.
+Package hyperref Info: Link coloring OFF on input line 57.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\gettitlestring.sty"
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
-\c@section@level=\count277
+\c@section@level=\count284
 )
-LaTeX Info: Redefining \ref on input line 53.
-LaTeX Info: Redefining \pageref on input line 53.
-LaTeX Info: Redefining \nameref on input line 53.
+LaTeX Info: Redefining \ref on input line 57.
+LaTeX Info: Redefining \pageref on input line 57.
+LaTeX Info: Redefining \nameref on input line 57.
 
 (template_Report.out) (template_Report.out)
 \@outlinefile=\write7
@@ -842,8 +868,8 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 99.
 )
-\Gin@req@height=\dimen278
-\Gin@req@width=\dimen279
+\Gin@req@height=\dimen280
+\Gin@req@width=\dimen281
 )
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -879,20 +905,20 @@ Package graphics Info: Driver file: pdftex.def on input line 99.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 54.
+LaTeX Font Info:    Try loading font information for U+msa on input line 58.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 54.
+LaTeX Font Info:    Try loading font information for U+msb on input line 58.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<./imgs/upc_logo.jpg, id=119, 372.1905pt x 348.3414pt>
+<./imgs/upc_logo.jpg, id=143, 372.1905pt x 348.3414pt>
 File: ./imgs/upc_logo.jpg Graphic file (type jpg)
 
 <use ./imgs/upc_logo.jpg>
-Package pdftex.def Info: ./imgs/upc_logo.jpg used on input line 54.
+Package pdftex.def Info: ./imgs/upc_logo.jpg used on input line 58.
 (pdftex.def)             Requested size: 100.37537pt x 93.9418pt.
  [1
 
@@ -901,21 +927,21 @@ logo.jpg>]pdfTeX warning (ext4): destination with the same identifier (name{pag
 e.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.64 \tableofcontents
+l.68 \tableofcontents
                       [1]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 64--64
+Overfull \hbox (6.0pt too wide) in paragraph at lines 68--68
 [][] 
  []
 
-(template_Report.toc)
+(template_Report.toc [2
+
+])
 \tf@toc=\write8
 \openout8 = `template_Report.toc'.
 
- [2
-
-]
+ [3]
 Chapter 1.
-[3
+[4
 
 ]
 Chapter 2.
@@ -923,7 +949,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.95 T
+l.99 T
       his point of view allows to manage this problem without taking into ac...
 [1
 
@@ -931,13 +957,18 @@ l.95 T
  been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.140 	$$
+l.144 	$$
           [2]pdfTeX warning (ext4): destination with the same identifier (name{
 page.3}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.180 
-       [3] [4]
+l.184 
+       [3]pdfTeX warning (ext4): destination with the same identifier (name{pag
+e.4}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.186 \chapter
+              {ILP model}\label{ch:ilp_model} [4]
 Chapter 3.
 [5
 
@@ -946,101 +977,175 @@ Chapter 4.
 [10
 
 ]
-Overfull \hbox (6.36705pt too wide) in paragraph at lines 354--387
+Overfull \hbox (6.36705pt too wide) in paragraph at lines 360--393
 []\OT1/cmr/bx/n/10 Algorithm 4.1.1:| []\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 ; Pa
 ths; Locations$\OT1/cmr/m/n/10 ) 
  []
 
 
-Overfull \hbox (72.99333pt too wide) in paragraph at lines 354--387
+Overfull \hbox (72.99333pt too wide) in paragraph at lines 360--393
 []$ 
  []
 
 
-Overfull \hbox (63.39021pt too wide) in paragraph at lines 389--413
+Overfull \hbox (63.39021pt too wide) in paragraph at lines 395--419
 []\OT1/cmr/bx/n/10 Algorithm 4.1.2:| []\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 FromL
 ocation; TravelTime; VisitedLocations$\OT1/cmr/m/n/10 ) 
  []
 
 
-Overfull \hbox (170.28386pt too wide) in paragraph at lines 389--413
+Overfull \hbox (170.28386pt too wide) in paragraph at lines 395--419
 []$ 
  []
 
 [11]
-Overfull \hbox (6.52998pt too wide) in paragraph at lines 415--453
+Overfull \hbox (6.52998pt too wide) in paragraph at lines 421--459
 []\OT1/cmr/bx/n/10 Algorithm 4.1.3:| []\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 S; st
 rategy$\OT1/cmr/m/n/10 ) 
  []
 
 
-Overfull \hbox (125.52104pt too wide) in paragraph at lines 415--453
+Overfull \hbox (125.52104pt too wide) in paragraph at lines 421--459
 []$ 
  []
 
 
-Overfull \hbox (32.00208pt too wide) in paragraph at lines 455--492
+Overfull \hbox (32.00208pt too wide) in paragraph at lines 461--498
 []\OT1/cmr/bx/n/10 Algorithm 4.1.4:| []\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 S; st
 rategy$\OT1/cmr/m/n/10 ) 
  []
 
 
-Overfull \hbox (203.50629pt too wide) in paragraph at lines 455--492
+Overfull \hbox (203.50629pt too wide) in paragraph at lines 461--498
 []$ 
  []
 
 [12]
-Overfull \hbox (40.69783pt too wide) in paragraph at lines 508--536
+Overfull \hbox (40.69783pt too wide) in paragraph at lines 514--542
 []\OT1/cmr/bx/n/10 Algorithm 4.2.1:| []\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 chrom
 osome$\OT1/cmr/m/n/10 ) 
  []
 
 
-Overfull \hbox (115.01273pt too wide) in paragraph at lines 508--536
+Overfull \hbox (115.01273pt too wide) in paragraph at lines 514--542
 []$ 
  []
 
 [13] [14]
 Chapter 5.
+[15
+
+] <./imgs/ilp_wsize_aggregated.png, id=343, 410.53375pt x 220.825pt>
+File: ./imgs/ilp_wsize_aggregated.png Graphic file (type png)
+
+<use ./imgs/ilp_wsize_aggregated.png>
+Package pdftex.def Info: ./imgs/ilp_wsize_aggregated.png used on input line 566
+.
+(pdftex.def)             Requested size: 389.23137pt x 209.36473pt.
+
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 542.
+(hyperref)                removing `math shift' on input line 571.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\alpha' on input line 542.
+(hyperref)                removing `\alpha' on input line 571.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 542.
+(hyperref)                removing `math shift' on input line 571.
 
-<./imgs/grasp_alfa_comparissons.png, id=304, 436.12938pt x 245.91875pt>
-File: ./imgs/grasp_alfa_comparissons.png Graphic file (type png)
+<./imgs/grasp_alfa_comparisons.png, id=345, 436.12938pt x 245.91875pt>
+File: ./imgs/grasp_alfa_comparisons.png Graphic file (type png)
 
-<use ./imgs/grasp_alfa_comparissons.png>
-Package pdftex.def Info: ./imgs/grasp_alfa_comparissons.png used on input line 
-559.
-(pdftex.def)             Requested size: 324.36168pt x 182.89635pt.
- [15
+<use ./imgs/grasp_alfa_comparisons.png>
+Package pdftex.def Info: ./imgs/grasp_alfa_comparisons.png used on input line 5
+88.
+(pdftex.def)             Requested size: 389.23137pt x 219.47487pt.
+ [16 <./imgs/ilp_wsize_aggregated.png>]
+[17 <./imgs/grasp_alfa_comparisons.png>]
+<./imgs/brkga_experiments.png, id=358, 435.12563pt x 243.40938pt>
+File: ./imgs/brkga_experiments.png Graphic file (type png)
 
-] [16 <./imgs/grasp_alfa_comparissons.png>]
+<use ./imgs/brkga_experiments.png>
+Package pdftex.def Info: ./imgs/brkga_experiments.png used on input line 650.
+(pdftex.def)             Requested size: 389.23137pt x 217.74788pt.
+ [18 <./imgs/brkga_experiments.png>]
+<./imgs/metaheuristic_quality_comparison.png, id=368, 349.80687pt x 179.67125pt
+>
+File: ./imgs/metaheuristic_quality_comparison.png Graphic file (type png)
+ <use ./imgs/metaheuristic_quality_comparison.png>
+Package pdftex.def Info: ./imgs/metaheuristic_quality_comparison.png used on in
+put line 671.
+(pdftex.def)             Requested size: 389.23137pt x 199.93364pt.
+
+<./imgs/ilp_vs_metaheuristics_time_comparison.png, id=371, 364.86313pt x 181.67
+876pt>
+File: ./imgs/ilp_vs_metaheuristics_time_comparison.png Graphic file (type png)
+ <use ./imgs/ilp_vs_metaheuristics_time_comparison.png>
+Package pdftex.def Info: ./imgs/ilp_vs_metaheuristics_time_comparison.png used 
+on input line 686.
+(pdftex.def)             Requested size: 389.23137pt x 193.82048pt.
+ [19 <./imgs/metaheuristic_quality_comparison.png>] [20 <./imgs/ilp_vs_metaheur
+istics_time_comparison.png>]
 Chapter 6.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 582.
-[17
+[21
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 582.
+Appendix A.
+[22
+
+]
+Appendix B.
+<./imgs/result_visualizer_example_1.png, id=391, 370.38374pt x 370.38374pt>
+File: ./imgs/result_visualizer_example_1.png Graphic file (type png)
+
+<use ./imgs/result_visualizer_example_1.png>
+Package pdftex.def Info: ./imgs/result_visualizer_example_1.png used on input l
+ine 738.
+(pdftex.def)             Requested size: 129.74599pt x 129.74362pt.
+
+<./imgs/result_visualizer_example_2.png, id=392, 370.88562pt x 369.88188pt>
+File: ./imgs/result_visualizer_example_2.png Graphic file (type png)
+
+<use ./imgs/result_visualizer_example_2.png>
+Package pdftex.def Info: ./imgs/result_visualizer_example_2.png used on input l
+ine 739.
+(pdftex.def)             Requested size: 129.74599pt x 129.39287pt.
+
+<./imgs/result_visualizer_example_3.png, id=393, 371.88937pt x 371.3875pt>
+File: ./imgs/result_visualizer_example_3.png Graphic file (type png)
+
+<use ./imgs/result_visualizer_example_3.png>
+Package pdftex.def Info: ./imgs/result_visualizer_example_3.png used on input l
+ine 740.
+(pdftex.def)             Requested size: 129.74599pt x 129.57388pt.
+
+<./imgs/result_visualizer_example_4.png, id=394, 371.3875pt x 371.88937pt>
+File: ./imgs/result_visualizer_example_4.png Graphic file (type png)
+
+<use ./imgs/result_visualizer_example_4.png>
+Package pdftex.def Info: ./imgs/result_visualizer_example_4.png used on input l
+ine 741.
+(pdftex.def)             Requested size: 129.74599pt x 129.9249pt.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 746.
+ [23
+
+ <./imgs/result_visualizer_example_1.png> <./imgs/result_visualizer_example_2.p
+ng> <./imgs/result_visualizer_example_3.png> <./imgs/result_visualizer_example_
+4.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 746.
  (template_Report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 582.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 582.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 746.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 746.
 Package rerunfilecheck Info: File `template_Report.out' has not changed.
-(rerunfilecheck)             Checksum: 64D7F231F963C6DC3F5E6FE9AD0AD6B3;1953.
+(rerunfilecheck)             Checksum: 1573B2D605F82C62D556F1F341EF6494;2362.
  ) 
 Here is how much of TeX's memory you used:
- 18847 strings out of 493334
- 343638 string characters out of 3136672
- 471428 words of memory out of 3000000
- 22076 multiletter control sequences out of 15000+200000
+ 19163 strings out of 493334
+ 349215 string characters out of 3136672
+ 474990 words of memory out of 3000000
+ 22355 multiletter control sequences out of 15000+200000
  14033 words of font info for 55 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  61i,47n,52p,10368b,702s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1067,9 +1172,9 @@ ic/amsfonts/cm/cmti10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public
 /amsfonts/cm/cmtt10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/a
 msfonts/cm/cmtt12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/ams
 fonts/symbols/msbm10.pfb>
-Output written on template_Report.pdf (21 pages, 569023 bytes).
+Output written on template_Report.pdf (28 pages, 1509507 bytes).
 PDF statistics:
- 409 PDF objects out of 1000 (max. 8388607)
- 70 named destinations out of 1000 (max. 500000)
- 243 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 495 PDF objects out of 1000 (max. 8388607)
+ 90 named destinations out of 1000 (max. 500000)
+ 331 words of extra memory for PDF output out of 10000 (max. 10000000)
 

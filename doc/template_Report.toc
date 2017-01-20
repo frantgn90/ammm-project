@@ -1,5 +1,5 @@
-\contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}
-\contentsline {section}{\numberline {1.1}Document structure}{3}{section.1.1}
+\contentsline {chapter}{\numberline {1}Introduction}{4}{chapter.1}
+\contentsline {section}{\numberline {1.1}Document structure}{4}{section.1.1}
 \contentsline {chapter}{\numberline {2}Problem definition}{1}{chapter.2}
 \contentsline {section}{\numberline {2.1}Description}{1}{section.2.1}
 \contentsline {section}{\numberline {2.2}Formal definition}{1}{section.2.2}
@@ -28,8 +28,14 @@
 \contentsline {section}{\numberline {4.2}BRKGA implementation}{13}{section.4.2}
 \contentsline {subsection}{\numberline {4.2.1}Chromosome structure}{13}{subsection.4.2.1}
 \contentsline {subsection}{\numberline {4.2.2}Decoder}{13}{subsection.4.2.2}
-\contentsline {chapter}{\numberline {5}Tunning and Comparissons}{15}{chapter.5}
-\contentsline {section}{\numberline {5.1}Tuning $\alpha $ parameter for GRASP}{15}{section.5.1}
-\contentsline {section}{\numberline {5.2}Tuning BRKGA parameters}{15}{section.5.2}
-\contentsline {section}{\numberline {5.3}Comparisson: ILP vs meta-heuristics}{16}{section.5.3}
-\contentsline {chapter}{\numberline {6}Conclusions}{17}{chapter.6}
+\contentsline {chapter}{\numberline {5}Tunning and Comparisons}{15}{chapter.5}
+\contentsline {section}{\numberline {5.1}Instances complexity factors}{15}{section.5.1}
+\contentsline {section}{\numberline {5.2}Tuning $\alpha $ parameter for GRASP}{16}{section.5.2}
+\contentsline {section}{\numberline {5.3}Tuning BRKGA parameters}{16}{section.5.3}
+\contentsline {section}{\numberline {5.4}Comparison: ILP vs meta-heuristics}{18}{section.5.4}
+\contentsline {subsection}{\numberline {5.4.1}Quality comparison}{19}{subsection.5.4.1}
+\contentsline {subsection}{\numberline {5.4.2}Time comparison}{19}{subsection.5.4.2}
+\contentsline {chapter}{\numberline {6}Conclusions}{21}{chapter.6}
+\contentsline {section}{\numberline {6.1}Future work}{21}{section.6.1}
+\contentsline {chapter}{Appendix \numberline {A}Instance generator}{22}{Appendix.1.A}
+\contentsline {chapter}{Appendix \numberline {B}Result visualizer}{23}{Appendix.1.B}

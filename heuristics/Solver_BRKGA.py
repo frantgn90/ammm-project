@@ -23,18 +23,17 @@ from Problem import Problem
 
 # Configuration 
 
-config_pElites = 0.20
+config_pElites = 0.2
 config_pMutants = 0.15
-config_numIndividuals = 15
+config_numIndividuals = 0
 config_maxExecTime = 2
 config_pInheritanceElite = 0.7
-config_maxGenerations = 10
+config_maxGenerations = 3
 
-# Some pre-calculations
 numGenes = 0
-numElites = int(round(config_pElites * config_numIndividuals))
-numMutants = int(round(config_pMutants * config_numIndividuals))
-numCrossOvers = config_numIndividuals - numElites - numMutants
+numElites = 0
+numMutants = 0
+numCrossOvers = 0
 
 BIGM=100000
 
@@ -199,8 +198,15 @@ class BRKGA_Decoder(object):
 class Solver_BRKGA(object):
     def __init__(self, problem):
         self.problem = problem
-        global numGenes
+        global numGenes, config_numIndividuals, numElites, numMutants, numCrossOvers
         numGenes = self.problem.getnLocations()
+        #config_numIndividuals = self.problem.getnLocations()
+        config_numIndividuals = 15
+        
+        # Some pre-calculations
+        numElites = int(round(config_pElites * config_numIndividuals))
+        numMutants = int(round(config_pMutants * config_numIndividuals))
+        numCrossOvers = config_numIndividuals - numElites - numMutants
         
         assert numElites > 0
         assert numMutants > 0
