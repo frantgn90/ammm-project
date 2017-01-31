@@ -1,1 +1,1 @@
-The heuristics part for the AMMM Project.
+AMMM Project for winter semester 2016.
