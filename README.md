@@ -1,1 +1,1 @@
-AMMM Project for winter semester 2016.
+AMMM Project for fall semester 2016.
